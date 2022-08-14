@@ -1,0 +1,12 @@
+server:
+  port: 8181
+spring:
+  datasource:
+    url: jdbc:mysql:///tempdb
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.example.demo.domain
+#  config-location:不知道是什么等有空百度后来补充
