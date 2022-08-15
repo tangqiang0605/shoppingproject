@@ -32,10 +32,10 @@
           </el-submenu>
           <el-submenu index="5" v-show="isLogin">
             <template slot="title">您好！{{ customer.cname }}</template>
-            <el-menu-item index="5-1" @click="changeName">修改昵称</el-menu-item>
-            <el-menu-item index="5-2" @click="changePassword">修改密码</el-menu-item>
-            <el-menu-item index="5-3" @click="toCart">购物车</el-menu-item>
-            <el-menu-item index="5-4" @click="toOrder">我的订单</el-menu-item>
+            <el-menu-item index="5-1" @click="customerChangeNameVisible=true">修改昵称</el-menu-item>
+            <el-menu-item index="5-2" @click="customerChangePassWordVisible=true">修改密码</el-menu-item>
+            <el-menu-item index="5-3" @click="toCustomer('1')">购物车</el-menu-item>
+            <el-menu-item index="5-4" @click="toCustomer('2')">我的订单</el-menu-item>
             <!--            <el-divider />-->
             <el-menu-item index="5-5" @click="outLogin">退出登录</el-menu-item>
           </el-submenu>
@@ -52,7 +52,7 @@
             <el-input v-model="customer.cid" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="密码" label-width="120px">
-            <el-input v-model="customer.cpassword" autocomplete="off"></el-input>
+            <el-input v-model="customer.cpassword" autocomplete="off" show-password></el-input>
           </el-form-item>
         </el-form>
 
@@ -99,12 +99,47 @@
       <!--      </el-dialog>-->
     </div>
 
+    <!--    账号管理-->
+    <!--    修改昵称-->
+    <div>
+      <el-dialog title="修改昵称" :visible.sync="customerChangeNameVisible">
+        <el-form :model="customer">
+          <el-form-item label="用户昵称" label-width="120px">
+            <el-input v-model="newName" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="customerChangeNameVisible = false;newName=''">取 消</el-button>
+          <el-button type="primary" @click="changeName">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    <div>
+      <el-dialog title="修改密码" :visible.sync="customerChangePassWordVisible">
+        <el-form :model="customer">
+          <el-form-item label="旧的密码" label-width="120px">
+            <el-input v-model="newPassword0" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="新的密码" label-width="120px">
+            <el-input v-model="newPassword1" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="确认新的密码" label-width="120px">
+            <el-input v-model="newPassword2" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="changePasswordCancel">取 消</el-button>
+          <el-button type="primary" @click="changePassword">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
 
     <!--    搜索框-->
     <el-row>
       <el-col offset="2">
         <el-input v-model="search" :placeholder="searchHint" style="width: 80%;margin-top: 20px">
         </el-input>
+        <!--        <input @keyup.enter="searchData">-->
         <el-button type="primary" style="margin-left: 5px;margin-bottom: 20px" @click="searchData">搜索</el-button>
       </el-col>
     </el-row>
@@ -180,6 +215,7 @@
       </el-table-column>
     </el-table>
 
+    <!--    店铺列表-->
     <el-row v-show="activeIndex=='2'"
             v-for="(item,index) in shopsData"
             style="margin-left: 60px;margin-right: 60px;margin-top: 20px">
@@ -216,12 +252,18 @@ export default {
       deliverySignupVisible: false,
       // 切换商品和店铺
       activeIndex: '1',
-      // 切换登录注册和账户管理控件
+      // 账户管理
       isLogin: false,
+      customerChangeNameVisible: false,
+      customerChangePassWordVisible: false,
+      newName: '',
+      newPassword0: '',
+      newPassword1: '',
+      newPassword2: '',
       // 搜索的内容
       searchHint: '搜索全部商品',
       search: '',
-      searchText:['搜索全部商品','搜索全部店铺'],
+      searchText: ['搜索全部商品', '搜索全部店铺'],
 
       // 数据实体
       cart: {
@@ -355,19 +397,70 @@ export default {
     },
     // 用户管理
     changeName() {
-      this.testInf = "changName";
+      // this.testInf = "changName";
+      if (this.newName === '') {
+
+      } else if (this.newName === this.customer.cname) {
+        this.$message.error("用户昵称重复");
+      } else {
+        var newCustomer = this.customer;
+        newCustomer.cname = this.newName;
+        axios.post('http://localhost:8181/customer/change', newCustomer)
+            .then(resp => {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+              this.customer = newCustomer;
+              this.$store.commit('saveCustomer', newCustomer);
+            });
+        this.newName = '';
+        this.customerChangeNameVisible = false;
+      }
+
+
     },
     changePassword() {
-      this.testInf = "changePassword";
+      // this.testInf = "changePassword";
+      if (this.newPassword0 === '' || this.newPassword1 === '' || this.newPassword2 === '') {
+
+      } else if (this.newPassword0 != this.customer.cpassword) {
+        this.$message.error("密码错误");
+      } else if (this.newPassword1 != this.newPassword2) {
+        this.$message.error("两次输入密码不一致!");
+      } else {
+        var newCustomer = this.customer;
+        newCustomer.cpassword = this.newPassword2;
+        axios.post('http://localhost:8181/customer/change', newCustomer)
+            .then(resp => {
+              this.$message({
+                message: '修改成功'+'请重新登录',
+                type: 'success'
+              });
+              // 清空登录信息:
+              this.$store.commit('saveCustomer', {});
+              this.customer = {};
+              this.isLogin=false;
+            });
+        this.newPassword0 = '';
+        this.newPassword1 = '';
+        this.newPassword2 = '';
+        this.customerChangePassWordVisible = false;
+      }
+
     },
-    toCart() {
-      this.testInf = "toCart";
+    changePasswordCancel() {
+      this.newPassword0 = '';
+      this.newPassword1 = '';
+      this.newPassword2 = '';
+      this.customerChangePassWordVisible = false;
     },
-    toOrder() {
-      this.testInf = "toOrder";
+    toCustomer(page) {
+      this.$router.push({name: 'customer', query: {activeIndex:page}});
     },
     outLogin() {
       // this.testInf = "outLogin";
+      this.customer = {};
       this.$store.commit('saveCustomer', {});
       this.isLogin = false;
       this.$message({
@@ -404,9 +497,7 @@ export default {
     },
     // 店铺列表的操作
     viewShop(index) {
-      // alert("to " + this.shopsData[index].sid);
       this.$router.push({name: 'shop', query: {sid: this.shopsData[index].sid}});
-      // this.$router.push({path:'/shop',query:{sid:this.shopsData[index].sid}});
     },
     // 搜索功能:当搜索为空时搜索全部
     searchData() {
@@ -443,7 +534,8 @@ export default {
         alert("搜索什么");
       }
     }
-  },
+  }
+  ,
 
   created() {
     // 测试shop界面用
@@ -474,7 +566,8 @@ export default {
     axios.get('http://localhost:8181/goods/shops').then(resp => {
       this.shopsData = resp.data;
     })
-  },
+  }
+  ,
 
 }
 </script>

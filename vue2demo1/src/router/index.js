@@ -13,11 +13,17 @@ const routes = [
   {
     path:'/shop',
     name:'shop',
-    component: ()=>import('../views/ShopView'),
+    component: ()=>import('../views/ShopView')
+  },
+  {
+    path:'/customer',
+    name:'customer',
+    component: ()=>import('../views/Customer'),
     meta: {
-      requireAuth: false
+      requireAuth: false,
     }
   }
+
 ]
 
 const router = new VueRouter({

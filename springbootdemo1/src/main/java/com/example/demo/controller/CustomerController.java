@@ -42,6 +42,11 @@ public class CustomerController {
         return customerService.getInf(customer);
     }
 
+    @PostMapping("change")
+    public void changeName(@RequestBody Customer customer){
+        customerService.update(customer);
+    }
+
     @GetMapping("findall")
     public List<Customer> findAll(){
         return customerService.findAll();
