@@ -387,7 +387,7 @@ export default {
     // 店铺列表的操作
     viewShop(index) {
       // alert("to " + this.shopsData[index].sid);
-      this.$router.push('/shop');
+      this.$router.push({name:'shop',query:{sid:this.shopsData[index].sid}});
       // this.$router.push({path:'/shop',query:{sid:this.shopsData[index].sid}});
     }
   },
