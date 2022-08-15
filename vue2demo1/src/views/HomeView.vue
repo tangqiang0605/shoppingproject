@@ -100,9 +100,18 @@
     </div>
 
 
+    <!--    搜索框-->
+    <el-row>
+      <el-col offset="2">
+        <el-input v-model="search" :placeholder="searchHint" style="width: 80%;margin-top: 20px">
+        </el-input>
+        <el-button type="primary" style="margin-left: 5px;margin-bottom: 20px" @click="searchData">搜索</el-button>
+      </el-col>
+    </el-row>
+
     <!--    商品列表-->
     <el-row v-show="activeIndex=='1'">
-      <el-col :span="4" v-for="(o, index) in goodsData" :offset="index%4? 1 : 2"
+      <el-col :span="4" v-for="(o, index) in goodsData" offset="index%4? 1 : 2"
               style="margin-top: 10px;margin-bottom: 10px">
         <el-card :body-style="{ padding: '10px'}" style="width:240px;height:350px" shadow="hover">
           <el-image
@@ -209,6 +218,10 @@ export default {
       activeIndex: '1',
       // 切换登录注册和账户管理控件
       isLogin: false,
+      // 搜索的内容
+      searchHint: '搜索全部商品',
+      search: '',
+      searchText:['搜索全部商品','搜索全部店铺'],
 
       // 数据实体
       cart: {
@@ -239,7 +252,10 @@ export default {
     //导航栏
     // 导航栏切换
     toGoods() {
+
       this.activeIndex = '1';
+      this.search = '';
+      this.searchHint = this.searchText[0];
       // 从服务器获取商品信息
       // if (this.goodsData.length == 0) {
       axios.get("http://localhost:8181/goods/show").then(resp => {
@@ -249,6 +265,8 @@ export default {
     },
     toShops() {
       this.activeIndex = '2';
+      this.search = '';
+      this.searchHint = this.searchText[1];
       // 从服务器获取店铺信息
       // if (this.shopsData.length == 0) {
       axios.get('http://localhost:8181/goods/shops').then(resp => {
@@ -387,17 +405,62 @@ export default {
     // 店铺列表的操作
     viewShop(index) {
       // alert("to " + this.shopsData[index].sid);
-      this.$router.push({name:'shop',query:{sid:this.shopsData[index].sid}});
+      this.$router.push({name: 'shop', query: {sid: this.shopsData[index].sid}});
       // this.$router.push({path:'/shop',query:{sid:this.shopsData[index].sid}});
+    },
+    // 搜索功能:当搜索为空时搜索全部
+    searchData() {
+      // if (this.search==='') {
+      //   if (this.activeIndex == '1') {
+      //     // this.searchHint = '搜索全部商品';
+      //     // 从服务器获取商品信息
+      //     axios.get("http://localhost:8181/goods/show").then(resp => {
+      //       this.goodsData = resp.data;
+      //     })
+      //
+      //   } else if (this.activeIndex == '2') {
+      //     // this.searchHint = '搜索全部店铺';
+      //     // 从服务器获取店铺信息
+      //     axios.get('http://localhost:8181/goods/shops').then(resp => {
+      //       this.shopsData = resp.data;
+      //     })
+      //   } else {
+      //     // this.searchHint = "搜索什么";
+      //   }
+      //
+      // } else
+      if (this.activeIndex == '1') {
+        // alert('搜索商品');
+        axios.get('http://localhost:8181/goods/searchgoods?gname=' + this.search).then(resp => {
+          this.goodsData = resp.data;
+        })
+      } else if (this.activeIndex == '2') {
+        // alert('搜索店铺');
+        axios.get('http://localhost:8181/goods/searchshops?sname=' + this.search).then(resp => {
+          this.shopsData = resp.data;
+        })
+      } else {
+        alert("搜索什么");
+      }
     }
   },
 
   created() {
     // 测试shop界面用
-    this.activeIndex = '2';
+    // this.activeIndex = '2';
+    // var cid = this.$store.state.customer.cid
     // alert(this.shopsData.length);
     // alert(this.shopsData.isEmpty());
     // alert(this.shopsData==null);
+    // 设置布局
+    this.activeIndex = '2';
+    if (this.activeIndex == '1') {
+      this.searchHint = this.searchText[0];
+    } else if (this.activeIndex == '2') {
+      this.searchHint = this.searchText[1];
+    } else {
+      this.searchHint = "搜索什么";
+    }
     // 从缓存中获取用户信息
     if (this.$store.state.customer.cid) {
       this.isLogin = true;
