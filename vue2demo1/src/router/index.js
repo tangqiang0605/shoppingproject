@@ -18,11 +18,20 @@ const routes = [
   {
     path:'/customer',
     name:'customer',
-    component: ()=>import('../views/Customer'),
+    component: ()=>import('../views/CustomerView'),
+    meta: {
+      requireAuth: false,
+    }
+  },
+  {
+    path: '/storekeeper',
+    name: 'storekeeper',
+    component: () => import('../views/StoreKeeperView'),
     meta: {
       requireAuth: false,
     }
   }
+
 
 ]
 

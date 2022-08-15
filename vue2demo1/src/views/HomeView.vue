@@ -26,7 +26,7 @@
           </el-submenu>
           <el-submenu index="4" v-show="!isLogin">
             <template slot="title">注册</template>
-            <el-menu-item index="4-1">我是顾客</el-menu-item>
+            <el-menu-item index="4-1" @click="customerSignupVisible=true">我是顾客</el-menu-item>
             <el-menu-item index="4-2">我是店长</el-menu-item>
             <el-menu-item index="4-3">我要接单</el-menu-item>
           </el-submenu>
@@ -59,6 +59,28 @@
         <div slot="footer" class="dialog-footer">
           <el-button @click="customerLoginVisible = false">取 消</el-button>
           <el-button type="primary" @click="customerLogin">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    <div class="customer-signup">
+      <el-dialog title="注册" :visible.sync="customerSignupVisible">
+
+        <!--        :model="customer"-->
+        <el-form>
+          <el-form-item label="用户昵称" label-width="120px">
+            <el-input v-model="newName" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户密码" label-width="120px">
+            <el-input v-model="newPassword1" autocomplete="off" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="再次输入密码" label-width="120px">
+            <el-input v-model="newPassword2" autocomplete="off" show-password></el-input>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="customerSignupCancel">取 消</el-button>
+          <el-button type="primary" @click="customerSignup">注 册</el-button>
         </div>
       </el-dialog>
     </div>
@@ -100,7 +122,6 @@
     </div>
 
     <!--    账号管理-->
-    <!--    修改昵称-->
     <div>
       <el-dialog title="修改昵称" :visible.sync="customerChangeNameVisible">
         <el-form :model="customer">
@@ -134,9 +155,10 @@
       </el-dialog>
     </div>
 
+
     <!--    搜索框-->
     <el-row>
-      <el-col offset="2">
+      <el-col :offset="2">
         <el-input v-model="search" :placeholder="searchHint" style="width: 80%;margin-top: 20px">
         </el-input>
         <!--        <input @keyup.enter="searchData">-->
@@ -146,7 +168,7 @@
 
     <!--    商品列表-->
     <el-row v-show="activeIndex=='1'">
-      <el-col :span="4" v-for="(o, index) in goodsData" offset="index%4? 1 : 2"
+      <el-col :span="4" v-for="(o, index) in goodsData" :offset="index%4? 1 : 2"
               style="margin-top: 10px;margin-bottom: 10px">
         <el-card :body-style="{ padding: '10px'}" style="width:240px;height:350px" shadow="hover">
           <el-image
@@ -165,55 +187,6 @@
         </el-card>
       </el-col>
     </el-row>
-
-    <!--不展示的表格-->
-    <el-table
-        v-show="false"
-        :data="goodsData"
-        border
-        style="width: 100%">
-      <!--      fixed prop label width-->
-      <el-table-column
-          label="商品"
-          width="120">
-        <template slot-scope="scope">
-          <el-image
-              fit="contain"
-              style="width: 100px; height: 100px"
-              :src="scope.row.srcurl"
-              :preview-src-list="[scope.row.srcurl]"></el-image>
-        </template>
-      </el-table-column>
-      <el-table-column
-          prop="goods.gname"
-          label="名称"
-          width="120">
-      </el-table-column>
-      <el-table-column
-          prop="sname"
-          label="商家"
-          width="120">
-      </el-table-column>
-      <el-table-column
-          prop="goods.gsales"
-          label="销售量"
-          width="120">
-      </el-table-column>
-      <el-table-column
-          prop="goods.gonlinenum"
-          label="剩余"
-          width="120">
-      </el-table-column>
-
-      <el-table-column
-          fixed="right"
-          label="操作"
-          width="100">
-        <template slot-scope="scope">
-          <el-button @click="addToCart(scope.row)" type="text" size="small">加入购物车</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
 
     <!--    店铺列表-->
     <el-row v-show="activeIndex=='2'"
@@ -352,6 +325,44 @@ export default {
         }
       }
     },
+    customerSignup(){
+      if(this.newName===''||this.newPassword1===''||this.newPassword2===''){
+        this.$message.error('请补充完所有信息');
+      }else if(this.newPassword2!=this.newPassword1){
+        this.$message.error('两次输入密码不一致');
+      }else{
+        // 注册并返回提示，设置customerid。
+        var newCustomer=this.customer;
+        newCustomer.cname=this.newName;
+        newCustomer.cpassword=this.newPassword1;
+        axios.post('http://localhost:8181/customer/signup',newCustomer).then(resp=>{
+          newCustomer.cid=resp.data;
+          this.customer=resp.data;
+          this.$alert('请使用账号id进行登录，您的账号id是： '+resp.data, '注册成功', {
+            confirmButtonText: '记好了',
+            callback: action => {
+              // this.$message({
+              //   type: 'info',
+              //   message: `action: ${ action }`
+              // });
+              this.newName='';
+              // this.newPassword0 = '';
+              this.newPassword1 = '';
+              this.newPassword2 = '';
+              this.customerSignupVisible = false
+            }
+          });
+        });
+
+      }
+    },
+    customerSignupCancel(){
+      this.newName='';
+      // this.newPassword0 = '';
+      this.newPassword1 = '';
+      this.newPassword2 = '';
+      this.customerSignupVisible = false
+    },
     storeKeeperLogin() {
 
       if (this.storeKeeper.spassword == '') {
@@ -427,20 +438,20 @@ export default {
       } else if (this.newPassword0 != this.customer.cpassword) {
         this.$message.error("密码错误");
       } else if (this.newPassword1 != this.newPassword2) {
-        this.$message.error("两次输入密码不一致!");
+        this.$message.error("两次输入密码不一致");
       } else {
         var newCustomer = this.customer;
         newCustomer.cpassword = this.newPassword2;
         axios.post('http://localhost:8181/customer/change', newCustomer)
             .then(resp => {
               this.$message({
-                message: '修改成功'+'请重新登录',
+                message: '修改成功' + '请重新登录',
                 type: 'success'
               });
               // 清空登录信息:
               this.$store.commit('saveCustomer', {});
               this.customer = {};
-              this.isLogin=false;
+              this.isLogin = false;
             });
         this.newPassword0 = '';
         this.newPassword1 = '';
@@ -456,7 +467,7 @@ export default {
       this.customerChangePassWordVisible = false;
     },
     toCustomer(page) {
-      this.$router.push({name: 'customer', query: {activeIndex:page}});
+      this.$router.push({name: 'customer', query: {activeIndex: page}});
     },
     outLogin() {
       // this.testInf = "outLogin";
@@ -471,12 +482,6 @@ export default {
 
     //商品列表的操作
     addToCart(index) {
-
-      // console.log("add" + this.goodsData[index].goods.gid);
-      // console.log("add" + index);
-      // alert(this.$store.state.customer.cid);
-      // if (this.$store.state.customer.cid == 'undefined') {
-      // {cid:this.customer.cid,gid:this.goodsData[i]}
       this.cart.cid = this.customer.cid;
       this.cart.gid = this.goodsData[index].goods.gid;
       this.cart.oamount = 1;
@@ -488,9 +493,8 @@ export default {
             type: 'success'
           });
         })
-
-
       } else {
+        this.$message.error("请先登录账号");
         this.customerLoginVisible = true;
       }
 

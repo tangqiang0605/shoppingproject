@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.Cart;
 import com.example.demo.domain.Customer;
+import com.example.demo.domain.Shops;
+import com.example.demo.domain.ShowingCart;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.GoodsService;
@@ -56,4 +58,10 @@ public class CustomerController {
     public String addToCart(@RequestBody Cart cart){
         return goodsService.addToCart(cart);
     }
+
+    @GetMapping("findshops")
+    public List<Shops> findShops(Integer cid){return customerService.findShops(cid);}
+
+    @GetMapping("findcarts")
+    public List<ShowingCart> findCart(Integer cid,Integer sid){return customerService.findCarts(cid,sid);}
 }

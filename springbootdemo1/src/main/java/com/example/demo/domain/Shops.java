@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Shops {
-    private String sid;
+    private Integer sid;
     private String sname;
     private Integer totalsales;
     private Integer onlinegoodsnum;

@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Customer;
+import com.example.demo.domain.Shops;
+import com.example.demo.domain.ShowingCart;
+import com.example.demo.mapper.CartMapper;
 import com.example.demo.mapper.CustomerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,8 @@ import java.util.List;
 public class CustomerService {
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private CartMapper cartMapper;
 
 
     public Integer signUp(Customer customer){
@@ -53,5 +58,12 @@ public class CustomerService {
     public int add(Customer customer){
         customerMapper.insert(customer);
         return customer.getCid();
+    }
+
+    public List<Shops> findShops(Integer cid){
+        return cartMapper.findShops(cid);
+    }
+    public List<ShowingCart> findCarts(Integer cid,Integer sid){
+        return cartMapper.findCarts(cid,sid);
     }
 }
