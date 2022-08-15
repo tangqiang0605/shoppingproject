@@ -1,5 +1,7 @@
 <template>
-{{sid}}
+  <div>
+    {{sid}}
+  </div>
 </template>
 
 <script>
