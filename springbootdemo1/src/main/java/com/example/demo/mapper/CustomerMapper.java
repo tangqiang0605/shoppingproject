@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 @Repository
 public interface CustomerMapper {
-    @Insert("insert into customer values(#{cid},#{cname},#{cpassword})")
+    @Insert("insert into customer values(null,#{cname},#{cpassword})")
     @Options(useGeneratedKeys = true,keyProperty = "cid",keyColumn = "cid")
     public void insert(Customer customer);
 

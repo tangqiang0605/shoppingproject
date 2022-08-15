@@ -18,52 +18,55 @@ public class CustomerService {
     private CartMapper cartMapper;
 
 
-    public Integer signUp(Customer customer){
-
-        Customer byId = customerMapper.findById(customer.getCid());
-        if (byId==null){
-            customerMapper.insert(customer);
-            return customer.getCid();
-        }else {
-            return 0;
-        }
+    public Integer signUp(Customer customer) {
+        customerMapper.insert(customer);
+        return customer.getCid();
+//        Customer byId = customerMapper.findById(customer.getCid());
+//        if (byId==null){
+//            customerMapper.insert(customer);
+//            return customer.getCid();
+//        }else {
+//            return 0;
+//        }
     }
 
-    public String tryLogin(Customer customer){
+    public String tryLogin(Customer customer) {
         Customer c = customerMapper.findById(customer.getCid());
-        if (c==null){
+        if (c == null) {
             return "用户不存在";
         }
-        if(!c.getCpassword().equals(customer.getCpassword())){
+        if (!c.getCpassword().equals(customer.getCpassword())) {
             return "密码错误";
         }
         return "登录验证成功";
     }
-    public Customer getInf(Customer customer){
-        Customer c=customerMapper.findById(customer.getCid());
-        if (c==null||(!c.getCpassword().equals(customer.getCpassword()))){
+
+    public Customer getInf(Customer customer) {
+        Customer c = customerMapper.findById(customer.getCid());
+        if (c == null || (!c.getCpassword().equals(customer.getCpassword()))) {
             return null;
         }
         return c;
     }
 
-    public void update(Customer customer){
+    public void update(Customer customer) {
         customerMapper.update(customer);
     }
 
-    public List<Customer> findAll(){
+    public List<Customer> findAll() {
         return customerMapper.findAll();
     }
 
-    public int add(Customer customer){
+    public int add(Customer customer) {
         customerMapper.insert(customer);
         return customer.getCid();
     }
 
-    public List<Shops> findShops(Integer cid){
+    public List<Shops> findShops(Integer cid) {
         return cartMapper.findShops(cid);
     }
-    public List<ShowingCart> findCarts(Integer cid,Integer sid){
-        return cartMapper.findCarts(cid,sid);
+
+    public List<ShowingCart> findCarts(Integer cid, Integer sid) {
+        return cartMapper.findCarts(cid, sid);
     }
 }

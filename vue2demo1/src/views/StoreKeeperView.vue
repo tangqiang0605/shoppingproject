@@ -172,6 +172,8 @@ export default {
         isban:false
       },
 
+      goodsData:[],
+
     }
   },
   methods: {
@@ -251,14 +253,7 @@ export default {
     },
   },
   created() {
-
     this.storeKeeper=this.$store.state.storeKeeper;
-
-    // if(this.$store.state.storeKeeper.sid){
-    //   this.testInf=this.$store.state.storeKeeper.sname;
-    // }else{
-    //
-    // }
   }
 
 }

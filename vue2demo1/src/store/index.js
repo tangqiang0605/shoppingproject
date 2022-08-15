@@ -20,6 +20,21 @@ export default new Vuex.Store({
               .cpassword
 
     },
+    delivery: {
+      did:
+          window.localStorage
+              .getItem('deliveryinfo' || '[]') == null ? 0 : JSON.parse(window.localStorage.getItem('deliveryinfo' || '[]'))
+              .did,
+      dname:
+          window.localStorage
+              .getItem('deliveryinfo' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('deliveryinfo' || '[]'))
+              .dname,
+      dpassword:
+          window.localStorage
+              .getItem('deliveryinfo' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('deliveryinfo' || '[]'))
+              .dpassword
+
+    },
     storeKeeper: {
       sid:
           window.localStorage
@@ -46,6 +61,10 @@ export default new Vuex.Store({
     saveCustomer(state, customer) {
       state.customer = customer;
       window.localStorage.setItem('customerinfo', JSON.stringify(customer))
+    },
+    saveDelivery(state, delivery) {
+      state.delivery = delivery;
+      window.localStorage.setItem('deliveryinfo', JSON.stringify(delivery))
     },
     saveStoreKeeper(state, storeKeeper) {
       state.storeKeeper = storeKeeper;

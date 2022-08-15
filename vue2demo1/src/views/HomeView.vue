@@ -22,13 +22,13 @@
             <template slot="title">登录</template>
             <el-menu-item index="3-1" @click="customerLoginVisible=true">我是顾客</el-menu-item>
             <el-menu-item index="3-2" @click="storeKeeperLoginVisible=true">我是店长</el-menu-item>
-            <el-menu-item index="3-3" @click="">我要接单</el-menu-item>
+            <el-menu-item index="3-3" @click="deliveryLoginVisible=true">我要接单</el-menu-item>
           </el-submenu>
           <el-submenu index="4" v-show="!isLogin">
             <template slot="title">注册</template>
             <el-menu-item index="4-1" @click="customerSignupVisible=true">我是顾客</el-menu-item>
-            <el-menu-item index="4-2">我是店长</el-menu-item>
-            <el-menu-item index="4-3">我要接单</el-menu-item>
+            <el-menu-item index="4-2" @click="storeKeeperSignupVisible=true">我是店长</el-menu-item>
+            <el-menu-item index="4-3" @click="deliverySignupVisible=true">我要接单</el-menu-item>
           </el-submenu>
           <el-submenu index="5" v-show="isLogin">
             <template slot="title">您好！{{ customer.cname }}</template>
@@ -84,6 +84,7 @@
         </div>
       </el-dialog>
     </div>
+
     <div class="storekeeper-login">
       <el-dialog title="登录" :visible.sync="storeKeeperLoginVisible">
 
@@ -92,7 +93,7 @@
             <el-input v-model="storeKeeper.sid" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="密码" label-width="120px">
-            <el-input v-model="storeKeeper.spassword" autocomplete="off"></el-input>
+            <el-input v-model="storeKeeper.spassword" autocomplete="off" show-password></el-input>
           </el-form-item>
         </el-form>
 
@@ -102,23 +103,68 @@
         </div>
       </el-dialog>
     </div>
+    <div class="storeKeeper-signup">
+      <el-dialog title="注册" :visible.sync="storeKeeperSignupVisible">
+
+        <!--        :model="customer"-->
+        <el-form>
+          <el-form-item label="用户昵称" label-width="120px">
+            <el-input v-model="newName" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户密码" label-width="120px">
+            <el-input v-model="newPassword1" autocomplete="off" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="再次输入密码" label-width="120px">
+            <el-input v-model="newPassword2" autocomplete="off" show-password></el-input>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="storeKeeperSignupCancel">取 消</el-button>
+          <el-button type="primary" @click="storeKeeperSignup">注 册</el-button>
+        </div>
+      </el-dialog>
+    </div>
+
     <div class="delivery-login">
-      <!--      <el-dialog title="登录" :visible.sync="storeKeeperLoginVisible">-->
+      <el-dialog title="登录" :visible.sync="deliveryLoginVisible">
 
-      <!--        <el-form :model="s">-->
-      <!--          <el-form-item label="用户id" label-width="120px">-->
-      <!--            <el-input v-model="storeKeeper.sid" autocomplete="off"></el-input>-->
-      <!--          </el-form-item>-->
-      <!--          <el-form-item label="密码" label-width="120px">-->
-      <!--            <el-input v-model="storeKeeper.spassword" autocomplete="off"></el-input>-->
-      <!--          </el-form-item>-->
-      <!--        </el-form>-->
+        <el-form :model="delivery">
+          <el-form-item label="用户id" label-width="120px">
+            <el-input v-model="delivery.did" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" label-width="120px">
+            <el-input v-model="delivery.dpassword" autocomplete="off" show-password></el-input>
+          </el-form-item>
+        </el-form>
 
-      <!--        <div slot="footer" class="dialog-footer">-->
-      <!--          <el-button @click="storeKeeperLoginVisible = false">取 消</el-button>-->
-      <!--          <el-button type="primary" @click="storeKeeperLogin">确 定</el-button>-->
-      <!--        </div>-->
-      <!--      </el-dialog>-->
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="deliveryLoginVisible = false">取 消</el-button>
+          <el-button type="primary" @click="deliveryLogin">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    <div class="delivery-signup">
+      <el-dialog title="注册" :visible.sync="deliverySignupVisible">
+
+        <!--        :model="customer"-->
+        <el-form>
+          <el-form-item label="用户昵称" label-width="120px">
+            <el-input v-model="newName" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="用户密码" label-width="120px">
+            <el-input v-model="newPassword1" autocomplete="off" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="再次输入密码" label-width="120px">
+            <el-input v-model="newPassword2" autocomplete="off" show-password></el-input>
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="deliverySignupCancel">取 消</el-button>
+          <el-button type="primary" @click="deliverySignup">注 册</el-button>
+        </div>
+      </el-dialog>
     </div>
 
     <!--    账号管理-->
@@ -336,22 +382,22 @@ export default {
         newCustomer.cname=this.newName;
         newCustomer.cpassword=this.newPassword1;
         axios.post('http://localhost:8181/customer/signup',newCustomer).then(resp=>{
-          newCustomer.cid=resp.data;
-          this.customer=resp.data;
+          // newCustomer.cid=resp.data;
           this.$alert('请使用账号id进行登录，您的账号id是： '+resp.data, '注册成功', {
             confirmButtonText: '记好了',
             callback: action => {
-              // this.$message({
-              //   type: 'info',
-              //   message: `action: ${ action }`
-              // });
               this.newName='';
               // this.newPassword0 = '';
               this.newPassword1 = '';
               this.newPassword2 = '';
-              this.customerSignupVisible = false
+              this.customerSignupVisible = false;
             }
           });
+          // todo：就算下面这条注释去掉设置密码为空，它还是能有正确的密码和昵称，不知道为什么。难道newCustomer和customer的数据是双向绑定的吗？
+          // this.customer.cpassword='';
+          this.customer.cid=resp.data;
+          this.testInf=this.customer;
+          this.customerLoginVisible=true;
         });
 
       }
@@ -401,7 +447,112 @@ export default {
         }
       }
     },
+    storeKeeperSignup(){
+      if(this.newName===''||this.newPassword1===''||this.newPassword2===''){
+        this.$message.error('请补充完所有信息');
+      }else if(this.newPassword2!=this.newPassword1){
+        this.$message.error('两次输入密码不一致');
+      }else{
+        // 注册并返回提示，设置storeKeeperid。
+        var newStoreKeeper=this.storeKeeper;
+        newStoreKeeper.sname=this.newName;
+        newStoreKeeper.spassword=this.newPassword1;
+        axios.post('http://localhost:8181/storekeeper/signup',newStoreKeeper).then(resp=>{
+          this.$alert('请使用账号id进行登录，您的账号id是： '+resp.data, '注册成功', {
+            confirmButtonText: '记好了',
+            callback: action => {
+              this.newName='';
+              this.newPassword1 = '';
+              this.newPassword2 = '';
+              this.storeKeeperSignupVisible = false;
+            }
+          });
+          this.storeKeeper.sid=resp.data;
+          this.testInf=this.storeKeeper;
+          this.storeKeeperLoginVisible=true;
+        });
 
+      }
+    },
+    storeKeeperSignupCancel(){
+      this.newName='';
+      // this.newPassword0 = '';
+      this.newPassword1 = '';
+      this.newPassword2 = '';
+      this.storeKeeperSignupVisible = false
+    },
+
+    deliveryLogin() {
+
+      if (this.delivery.dpassword == '') {
+        this.$message.error("请输入密码");
+      } else if (this.delivery.did == '') {
+        this.$message.error("请输入用户id");
+      } else {
+        var n = Number(this.delivery.did);
+        if (isNaN(n)) {
+          this.$message.error("用户id必须为数字");
+        } else {
+          this.delivery.did = n;
+          axios.post('http://localhost:8181/delivery/login', this.delivery).then(resp => {
+            if ("登录验证成功" === resp.data) {
+              axios.post('http://localhost:8181/delivery/getinf', this.delivery).then(resp => {
+                // this.delivery = resp.data;
+                // this.testInf = this.;
+                this.deliveryLoginVisible = false;
+                // this.isLogin = true;
+                this.$store.commit('saveDelivery', this.delivery);
+                this.$router.push('/delivery');
+              })
+              this.$message({
+                message: resp.data,
+                type: 'success'
+              });
+
+            } else {
+              this.$message.error(resp.data);
+            }
+          })
+
+        }
+      }
+    },
+    deliverySignup(){
+      if(this.newName===''||this.newPassword1===''||this.newPassword2===''){
+        this.$message.error('请补充完所有信息');
+      }else if(this.newPassword2!=this.newPassword1){
+        this.$message.error('两次输入密码不一致');
+      }else{
+        var newDelivery=this.delivery;
+        newDelivery.dname=this.newName;
+        newDelivery.dpassword=this.newPassword1;
+        axios.post('http://localhost:8181/delivery/signup',newDelivery).then(resp=>{
+          // newCustomer.cid=resp.data;
+          this.$alert('请使用账号id进行登录，您的账号id是： '+resp.data, '注册成功', {
+            confirmButtonText: '记好了',
+            callback: action => {
+              this.newName='';
+              // this.newPassword0 = '';
+              this.newPassword1 = '';
+              this.newPassword2 = '';
+              this.deliverySignupVisible = false;
+            }
+          });
+
+          this.delivery.did=resp.data;
+          this.testInf=this.delivery;
+          this.deliveryLoginVisible=true;
+        });
+
+      }
+    },
+    deliverySignupCancel(){
+      this.newName='';
+      // this.newPassword0 = '';
+      this.newPassword1 = '';
+      this.newPassword2 = '';
+      this.deliverySignupVisible = false
+    },
 
     handleSelect(key, keyPath) {
       // console.log(activeIndex)

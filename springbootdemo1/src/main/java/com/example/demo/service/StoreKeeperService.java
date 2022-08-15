@@ -21,14 +21,8 @@ public class StoreKeeperService {
     private StoreKeeperMapper storeKeeperMapper;
 
     public Integer signUp(StoreKeeper storeKeeper){
-        StoreKeeper byId = storeKeeperMapper.findById(storeKeeper.getSid());
-        if (byId==null){
-            storeKeeperMapper.insert(storeKeeper);
-            return storeKeeper.getSid();
-        }else {
-            return 0;
-        }
-
+        storeKeeperMapper.insert(storeKeeper);
+        return storeKeeper.getSid();
     }
     public String tryLogin(StoreKeeper storeKeeper){
         StoreKeeper s = storeKeeperMapper.findById(storeKeeper.getSid());

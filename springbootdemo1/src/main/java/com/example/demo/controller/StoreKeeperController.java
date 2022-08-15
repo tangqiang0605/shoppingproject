@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("storekeeper")
 public class StoreKeeperController {
+    @Autowired
+    private StoreKeeperService storeKeeperService;
+
 
     /**
      * 账号管理：注册
@@ -53,11 +56,6 @@ public class StoreKeeperController {
     }
 
 
-
-
-    //    private GoodsService goodsService;
-    @Autowired
-    private StoreKeeperService storeKeeperService;
 
     @PostMapping("addgoods/base")
     public int addGoodsBase(@RequestBody Goods goods){

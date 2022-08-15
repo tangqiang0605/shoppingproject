@@ -24,12 +24,21 @@ const routes = [
     }
   },
   {
+    path:'/delivery',
+    name:'delivery',
+    component: ()=>import('../views/DeliveryView'),
+    meta: {
+      requireAuth: false,
+    }
+  },
+  {
     path: '/storekeeper',
     name: 'storekeeper',
     component: () => import('../views/StoreKeeperView'),
     meta: {
       requireAuth: false,
-    }
+    },
+
   }
 
 
