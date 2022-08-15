@@ -1,5 +1,5 @@
 <template>
-
+{{sid}}
 </template>
 
 <script>
