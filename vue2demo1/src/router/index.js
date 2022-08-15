@@ -32,6 +32,14 @@ const routes = [
     }
   },
   {
+    path:'/manager',
+    name:'manager',
+    component: ()=>import('../views/Manager'),
+    meta: {
+      requireAuth: false,
+    }
+  },
+  {
     path: '/storekeeper',
     name: 'storekeeper',
     component: () => import('../views/StoreKeeperView'),

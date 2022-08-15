@@ -1,9 +1,9 @@
 <template>
   <div>
-    {{testInf}}
+    {{ testInf }}
     <el-row>
       <el-col :span="8">
-        <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+        <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
           <el-menu-item index="1">已上架</el-menu-item>
           <el-menu-item index="2">仓库中</el-menu-item>
           <el-menu-item index="3">订单处理</el-menu-item>
@@ -17,7 +17,7 @@
       <el-col :span="4">
         <el-menu class="el-menu-demo" mode="horizontal">
           <el-submenu index="5">
-            <template slot="title">您好！{{storeKeeper.sname}}店长</template>
+            <template slot="title">您好！{{ storeKeeper.sname }}店长</template>
             <el-menu-item index="5-1" @click="changeName">修改昵称</el-menu-item>
             <el-menu-item index="5-2" @click="changePassword">修改密码</el-menu-item>
             <el-menu-item index="5-5" @click="outLogin">退出登录</el-menu-item>
@@ -161,24 +161,84 @@ export default {
       formLabelWidth: '120px',
       title: '添加商品',
 
-      testInf:'',
+      testInf: '',
 
-      activeIndex:'1',
+      activeIndex: '1',
 
-      storeKeeper:{
-        sid:'',
-        sname:'',
-        spassword:'',
-        isban:false
+      storeKeeper: {
+        sid: '',
+        sname: '',
+        spassword: '',
+        isban: false
       },
 
-      goodsData:[],
+      goodsData: [],
 
     }
   },
   methods: {
-    outLogin(){
-      this.$store.commit('saveStoreKeeper',{});
+    // 用户管理
+    changeName() {
+      // this.testInf = "changName";
+      if (this.newName === '') {
+
+      } else if (this.newName === this.customer.cname) {
+        this.$message.error("用户昵称重复");
+      } else {
+        var newCustomer = this.customer;
+        newCustomer.cname = this.newName;
+        axios.post('http://localhost:8181/customer/change', newCustomer)
+            .then(resp => {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+              this.customer = newCustomer;
+              this.$store.commit('saveCustomer', newCustomer);
+            });
+        this.newName = '';
+        this.customerChangeNameVisible = false;
+      }
+
+
+    },
+    changePassword() {
+      // this.testInf = "changePassword";
+      if (this.newPassword0 === '' || this.newPassword1 === '' || this.newPassword2 === '') {
+
+      } else if (this.newPassword0 != this.customer.cpassword) {
+        this.$message.error("密码错误");
+      } else if (this.newPassword1 != this.newPassword2) {
+        this.$message.error("两次输入密码不一致");
+      } else {
+        var newCustomer = this.customer;
+        newCustomer.cpassword = this.newPassword2;
+        axios.post('http://localhost:8181/customer/change', newCustomer)
+            .then(resp => {
+              this.$message({
+                message: '修改成功' + '请重新登录',
+                type: 'success'
+              });
+              // 清空登录信息:
+              this.$store.commit('saveCustomer', {});
+              this.customer = {};
+              this.isLogin = false;
+            });
+        this.newPassword0 = '';
+        this.newPassword1 = '';
+        this.newPassword2 = '';
+        this.customerChangePassWordVisible = false;
+      }
+
+    },
+    changePasswordCancel() {
+      this.newPassword0 = '';
+      this.newPassword1 = '';
+      this.newPassword2 = '';
+      this.customerChangePassWordVisible = false;
+    },
+    outLogin() {
+      this.$store.commit('saveStoreKeeper', {});
       this.$router.push('/');
     },
 
@@ -253,7 +313,7 @@ export default {
     },
   },
   created() {
-    this.storeKeeper=this.$store.state.storeKeeper;
+    this.storeKeeper = this.$store.state.storeKeeper;
   }
 
 }

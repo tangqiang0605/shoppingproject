@@ -1,22 +1,25 @@
 <template>
   <div class="home">
     <!--    测试信息-->
-    {{ testInf }}
+    <!--    {{ testInf }}-->
     <!--    导航栏-->
     <el-row>
+      <!--      导航栏左-->
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
           <el-menu-item index="1" @click="toGoods">商品</el-menu-item>
           <el-menu-item index="2" @click="toShops">店铺</el-menu-item>
         </el-menu>
       </el-col>
+      <!--      导航栏中-->
       <el-col :span="12">
         <el-menu class="el-menu-demo" mode="horizontal">
           <el-menu-item></el-menu-item>
         </el-menu>
       </el-col>
-
+      <!--      导航栏右-->
       <el-col :span="4">
+        <!--        导航栏-注册登录》-->
         <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect">
           <el-submenu index="3" v-show="!isLogin">
             <template slot="title">登录</template>
@@ -30,20 +33,21 @@
             <el-menu-item index="4-2" @click="storeKeeperSignupVisible=true">我是店长</el-menu-item>
             <el-menu-item index="4-3" @click="deliverySignupVisible=true">我要接单</el-menu-item>
           </el-submenu>
+          <!--          导航栏-用户管理-->
           <el-submenu index="5" v-show="isLogin">
             <template slot="title">您好！{{ customer.cname }}</template>
             <el-menu-item index="5-1" @click="customerChangeNameVisible=true">修改昵称</el-menu-item>
             <el-menu-item index="5-2" @click="customerChangePassWordVisible=true">修改密码</el-menu-item>
             <el-menu-item index="5-3" @click="toCustomer('1')">购物车</el-menu-item>
             <el-menu-item index="5-4" @click="toCustomer('2')">我的订单</el-menu-item>
-            <!--            <el-divider />-->
             <el-menu-item index="5-5" @click="outLogin">退出登录</el-menu-item>
           </el-submenu>
         </el-menu>
 
       </el-col>
     </el-row>
-    <!--    登录与注册的弹窗-->
+
+    <!--    顾客登录与注册的弹窗-->
     <div class="customer-login">
       <el-dialog title="登录" :visible.sync="customerLoginVisible">
 
@@ -84,7 +88,7 @@
         </div>
       </el-dialog>
     </div>
-
+    <!--    店主登录与注册的弹窗-->
     <div class="storekeeper-login">
       <el-dialog title="登录" :visible.sync="storeKeeperLoginVisible">
 
@@ -125,7 +129,7 @@
         </div>
       </el-dialog>
     </div>
-
+    <!--    配送员登录与注册的弹窗-->
     <div class="delivery-login">
       <el-dialog title="登录" :visible.sync="deliveryLoginVisible">
 
@@ -167,7 +171,8 @@
       </el-dialog>
     </div>
 
-    <!--    账号管理-->
+    <!--    顾客账号管理-->
+    <!--    修改昵称-->
     <div>
       <el-dialog title="修改昵称" :visible.sync="customerChangeNameVisible">
         <el-form :model="customer">
@@ -181,6 +186,7 @@
         </div>
       </el-dialog>
     </div>
+    <!--    修改密码-->
     <div>
       <el-dialog title="修改密码" :visible.sync="customerChangePassWordVisible">
         <el-form :model="customer">
@@ -200,7 +206,6 @@
         </div>
       </el-dialog>
     </div>
-
 
     <!--    搜索框-->
     <el-row>
@@ -251,9 +256,6 @@
 </template>
 
 <script>
-// import ShopHead from "@/components/ShopHead";
-// import GoodsTable from "@/components/GoodsTable";
-
 import axios from 'axios'
 
 export default {
@@ -302,7 +304,9 @@ export default {
         isban: false
       },
       delivery: {
-        did: ''
+        did: '',
+        dname: '',
+        dpassword: ''
       },
 
       goodsData: [],
@@ -310,7 +314,6 @@ export default {
     }
   },
   methods: {
-    //导航栏
     // 导航栏切换
     toGoods() {
 
@@ -338,7 +341,6 @@ export default {
     },
     //登录与注册检查
     customerLogin() {
-
       if (this.customer.cpassword == '') {
         this.$message.error("请输入密码");
       } else if (this.customer.cid == '') {
@@ -371,22 +373,22 @@ export default {
         }
       }
     },
-    customerSignup(){
-      if(this.newName===''||this.newPassword1===''||this.newPassword2===''){
+    customerSignup() {
+      if (this.newName === '' || this.newPassword1 === '' || this.newPassword2 === '') {
         this.$message.error('请补充完所有信息');
-      }else if(this.newPassword2!=this.newPassword1){
+      } else if (this.newPassword2 != this.newPassword1) {
         this.$message.error('两次输入密码不一致');
-      }else{
+      } else {
         // 注册并返回提示，设置customerid。
-        var newCustomer=this.customer;
-        newCustomer.cname=this.newName;
-        newCustomer.cpassword=this.newPassword1;
-        axios.post('http://localhost:8181/customer/signup',newCustomer).then(resp=>{
+        var newCustomer = this.customer;
+        newCustomer.cname = this.newName;
+        newCustomer.cpassword = this.newPassword1;
+        axios.post('http://localhost:8181/customer/signup', newCustomer).then(resp => {
           // newCustomer.cid=resp.data;
-          this.$alert('请使用账号id进行登录，您的账号id是： '+resp.data, '注册成功', {
+          this.$alert('请使用账号id进行登录，您的账号id是： ' + resp.data, '注册成功', {
             confirmButtonText: '记好了',
             callback: action => {
-              this.newName='';
+              this.newName = '';
               // this.newPassword0 = '';
               this.newPassword1 = '';
               this.newPassword2 = '';
@@ -395,20 +397,21 @@ export default {
           });
           // todo：就算下面这条注释去掉设置密码为空，它还是能有正确的密码和昵称，不知道为什么。难道newCustomer和customer的数据是双向绑定的吗？
           // this.customer.cpassword='';
-          this.customer.cid=resp.data;
-          this.testInf=this.customer;
-          this.customerLoginVisible=true;
+          this.customer.cid = resp.data;
+          this.testInf = this.customer;
+          this.customerLoginVisible = true;
         });
 
       }
     },
-    customerSignupCancel(){
-      this.newName='';
+    customerSignupCancel() {
+      this.newName = '';
       // this.newPassword0 = '';
       this.newPassword1 = '';
       this.newPassword2 = '';
       this.customerSignupVisible = false
     },
+
     storeKeeperLogin() {
 
       if (this.storeKeeper.spassword == '') {
@@ -447,35 +450,35 @@ export default {
         }
       }
     },
-    storeKeeperSignup(){
-      if(this.newName===''||this.newPassword1===''||this.newPassword2===''){
+    storeKeeperSignup() {
+      if (this.newName === '' || this.newPassword1 === '' || this.newPassword2 === '') {
         this.$message.error('请补充完所有信息');
-      }else if(this.newPassword2!=this.newPassword1){
+      } else if (this.newPassword2 != this.newPassword1) {
         this.$message.error('两次输入密码不一致');
-      }else{
+      } else {
         // 注册并返回提示，设置storeKeeperid。
-        var newStoreKeeper=this.storeKeeper;
-        newStoreKeeper.sname=this.newName;
-        newStoreKeeper.spassword=this.newPassword1;
-        axios.post('http://localhost:8181/storekeeper/signup',newStoreKeeper).then(resp=>{
-          this.$alert('请使用账号id进行登录，您的账号id是： '+resp.data, '注册成功', {
+        var newStoreKeeper = this.storeKeeper;
+        newStoreKeeper.sname = this.newName;
+        newStoreKeeper.spassword = this.newPassword1;
+        axios.post('http://localhost:8181/storekeeper/signup', newStoreKeeper).then(resp => {
+          this.$alert('请使用账号id进行登录，您的账号id是： ' + resp.data, '注册成功', {
             confirmButtonText: '记好了',
             callback: action => {
-              this.newName='';
+              this.newName = '';
               this.newPassword1 = '';
               this.newPassword2 = '';
               this.storeKeeperSignupVisible = false;
             }
           });
-          this.storeKeeper.sid=resp.data;
-          this.testInf=this.storeKeeper;
-          this.storeKeeperLoginVisible=true;
+          this.storeKeeper.sid = resp.data;
+          this.testInf = this.storeKeeper;
+          this.storeKeeperLoginVisible = true;
         });
 
       }
     },
-    storeKeeperSignupCancel(){
-      this.newName='';
+    storeKeeperSignupCancel() {
+      this.newName = '';
       // this.newPassword0 = '';
       this.newPassword1 = '';
       this.newPassword2 = '';
@@ -517,21 +520,21 @@ export default {
         }
       }
     },
-    deliverySignup(){
-      if(this.newName===''||this.newPassword1===''||this.newPassword2===''){
+    deliverySignup() {
+      if (this.newName === '' || this.newPassword1 === '' || this.newPassword2 === '') {
         this.$message.error('请补充完所有信息');
-      }else if(this.newPassword2!=this.newPassword1){
+      } else if (this.newPassword2 != this.newPassword1) {
         this.$message.error('两次输入密码不一致');
-      }else{
-        var newDelivery=this.delivery;
-        newDelivery.dname=this.newName;
-        newDelivery.dpassword=this.newPassword1;
-        axios.post('http://localhost:8181/delivery/signup',newDelivery).then(resp=>{
+      } else {
+        var newDelivery = this.delivery;
+        newDelivery.dname = this.newName;
+        newDelivery.dpassword = this.newPassword1;
+        axios.post('http://localhost:8181/delivery/signup', newDelivery).then(resp => {
           // newCustomer.cid=resp.data;
-          this.$alert('请使用账号id进行登录，您的账号id是： '+resp.data, '注册成功', {
+          this.$alert('请使用账号id进行登录，您的账号id是： ' + resp.data, '注册成功', {
             confirmButtonText: '记好了',
             callback: action => {
-              this.newName='';
+              this.newName = '';
               // this.newPassword0 = '';
               this.newPassword1 = '';
               this.newPassword2 = '';
@@ -539,15 +542,15 @@ export default {
             }
           });
 
-          this.delivery.did=resp.data;
-          this.testInf=this.delivery;
-          this.deliveryLoginVisible=true;
+          this.delivery.did = resp.data;
+          this.testInf = this.delivery;
+          this.deliveryLoginVisible = true;
         });
 
       }
     },
-    deliverySignupCancel(){
-      this.newName='';
+    deliverySignupCancel() {
+      this.newName = '';
       // this.newPassword0 = '';
       this.newPassword1 = '';
       this.newPassword2 = '';
