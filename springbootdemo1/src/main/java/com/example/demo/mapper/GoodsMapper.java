@@ -6,6 +6,7 @@ import com.example.demo.domain.ShowingGoods;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -18,11 +19,17 @@ public interface GoodsMapper {
 //    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},#{gname},#{gonlinenum},#{time})")
 //    public void insert(Goods goods);
 
+    @Update("update goods set state=#{state} where gid=#{gid}")
+    public void updateState(Integer gid,String state);
+
     @Update("update goods set gsales=#{gsales},state=#{state},gonlinenum=#{gonlinenum} where gid=#{gid}")
     public void exchange(Goods goods);
 
     @Select("select * from goods where gid=#{gid}")
     public Goods findByGid(Integer gid);
+
+//    @Select("select * from goods where sid=#{sid}")
+//    public List<Goods> findGoodsBySid(Integer sid);
 
     @Select("select gid from goods where sid=#{sid}")
     public List<Integer> findByShop(Integer sid);
@@ -57,20 +64,48 @@ public interface GoodsMapper {
 
     @Select("select * from storekeeper,goods,src \n" +
             "where goods.srcid=src.srcid \n" +
-            "  and state=\"已上架\" \n" +
+            "  and state=#{state} \n" +
             "  and storekeeper.sid=goods.sid\n" +
             "  and storekeeper.sid=#{sid}")
     @Results({
             @Result(column = "srcurl", property = "srcurl"),
             @Result(column = "sname", property = "sname"),
             @Result(column = "gid", property = "goods.gid"),
-//            @Result(column = "",property = "goods.sid"),
+            @Result(column = "gsave",property = "goods.gsave"),
             @Result(column = "gsales", property = "goods.gsales"),
+            @Result(column = "sid", property = "goods.sid"),
+//            @Result(column = "gsales", property = "goods.gsales"),
             @Result(column = "gname", property = "goods.gname"),
             @Result(column = "gonlinenum", property = "goods.gonlinenum"),
+            @Result(column = "time", property = "goods.time"),
     })
-    public List<ShowingGoods> findBySid(Integer sid);
+    public List<ShowingGoods> findBySid(Integer sid,String state);
 
+//    private Integer gid;
+//    private Integer gsave;
+//    private Integer gsales;
+//    private Integer sid;
+//    private String state;
+//    private Integer srcid;
+//    private String gname;
+//    private Integer gonlinenum;
+//    private Date time;
+//
+//    @Select("select * from storekeeper,goods,src \n" +
+//            "where goods.srcid=src.srcid \n" +
+//            "  and state=\"已上架\" \n" +
+//            "  and storekeeper.sid=goods.sid\n" +
+//            "  and storekeeper.sid=#{sid}")
+//    @Results({
+//            @Result(column = "srcurl", property = "srcurl"),
+//            @Result(column = "sname", property = "sname"),
+//            @Result(column = "gid", property = "goods.gid"),
+////            @Result(column = "",property = "goods.sid"),
+//            @Result(column = "gsales", property = "goods.gsales"),
+//            @Result(column = "gname", property = "goods.gname"),
+//            @Result(column = "gonlinenum", property = "goods.gonlinenum"),
+//    })
+//    public List<ShowingGoods> findBySid(Integer sid);
 
     //    模糊查询
 //    @Select("select * from t_user where gname like concat('%',#{gname},'%')")

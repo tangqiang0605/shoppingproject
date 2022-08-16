@@ -1,14 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Customer;
-import com.example.demo.domain.Goods;
-import com.example.demo.domain.StoreKeeper;
+import com.example.demo.domain.*;
 import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.mapper.SrcMapper;
 import com.example.demo.mapper.StoreKeeperMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class StoreKeeperService {
@@ -66,7 +66,18 @@ public class StoreKeeperService {
         return goods.getGid();
     }
 
+    public List<ShowingGoods> findGoodsBySid(Integer sid){
+        return goodsMapper.findBySid(sid,"已上架");
+    }
 
+    public List<ShowingGoods> findRepository(Integer sid){
+        return goodsMapper.findBySid(sid,"仓库中");
+    }
 
+//    public List<Goods> find()
+
+//    public List<Src> findAllSrc(){
+//        return
+//    }
 
 }

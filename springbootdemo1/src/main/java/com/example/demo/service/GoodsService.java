@@ -52,7 +52,11 @@ public class GoodsService {
 
 
     public List<ShowingGoods> showShop(Integer sid) {
-        return goodsMapper.findBySid(sid);
+        return goodsMapper.findBySid(sid,"已上架");
+    }
+
+    public void updateState(Integer gid,String state){
+        goodsMapper.updateState(gid,state);
     }
 
 

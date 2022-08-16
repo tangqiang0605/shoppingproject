@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.domain.Shops;
 import com.example.demo.domain.ShowingCart;
 import com.example.demo.mapper.CartMapper;
+import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,15 @@ class DemoApplicationTests {
 	private CartMapper cartMapper;
 	@Autowired
 	private CustomerService customerService;
+	@Autowired
+	private GoodsMapper goodsMapper;
 
 	@Test
 	void contextLoads() {
+	}
+	@Test
+	void t4GoodsMapper(){
+		System.out.println(goodsMapper.findBySid(100,"已上架"));
 	}
 
 	@Test

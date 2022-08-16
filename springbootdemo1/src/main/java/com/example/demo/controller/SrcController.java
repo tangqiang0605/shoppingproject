@@ -25,6 +25,8 @@ public class SrcController {
     @Value("${server.port}")
     private String port;
 
+//    public
+
     @Autowired
     private SrcService srcService;
 
@@ -35,6 +37,11 @@ public class SrcController {
 ////        return (Integer)postContext.get("sid") + (Integer)postContext.get("gid");
 //        System.out.println(postContext.get("sid"));
 ////        return sid+gid;
+//    }
+
+//    @GetMapping("findAll")
+//    public List<Src> findAll(){
+//        return srcService.findAll();
 //    }
 
     @PostMapping("upload")

@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.Customer;
-import com.example.demo.domain.Goods;
-import com.example.demo.domain.StoreKeeper;
+import com.example.demo.domain.*;
 import com.example.demo.service.GoodsService;
 import com.example.demo.service.StoreKeeperService;
 import org.apache.catalina.Store;
@@ -10,12 +8,16 @@ import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("storekeeper")
 public class StoreKeeperController {
     @Autowired
     private StoreKeeperService storeKeeperService;
 
+    @Autowired
+    private GoodsService goodsService;
 
     /**
      * 账号管理：注册
@@ -55,14 +57,24 @@ public class StoreKeeperController {
         return "更新成功";
     }
 
-
-
     @PostMapping("addgoods/base")
     public int addGoodsBase(@RequestBody Goods goods){
         return storeKeeperService.addGoods(goods);
     }
 
+    @GetMapping("findgoodsbysid")
+    public List<ShowingGoods> findGoodsBySid(Integer sid){
+        return storeKeeperService.findGoodsBySid(sid);
+    }
 
+    @GetMapping("showrepository")
+    public List<ShowingGoods> showRepository(Integer sid){return storeKeeperService.findRepository(sid);}
+
+    @PostMapping("updategoodsstate")
+    public void updateGoodsState(@RequestBody ShowingGoods showingGoods){
+        Goods goods = showingGoods.getGoods();
+        goodsService.updateState(goods.getGid(),goods.getState());
+    }
 
 
 

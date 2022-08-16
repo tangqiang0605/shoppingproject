@@ -5,6 +5,8 @@ import com.example.demo.mapper.SrcMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SrcService {
 
@@ -15,5 +17,10 @@ public class SrcService {
         srcMapper.insert(src);
         return src.getSrcid();
     }
+
+//    public List<Src> findAll(){
+//        return srcMapper.findAll();
+//    }
+
 
 }

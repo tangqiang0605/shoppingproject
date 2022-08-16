@@ -4,9 +4,9 @@
     <el-row>
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
-          <el-menu-item index="1">已上架</el-menu-item>
-          <el-menu-item index="2">仓库中</el-menu-item>
-          <el-menu-item index="3">订单处理</el-menu-item>
+          <el-menu-item index="1" @click="toOnline">已上架</el-menu-item>
+          <el-menu-item index="2" @click="toRepository">仓库中</el-menu-item>
+          <el-menu-item index="3" @click="toOrders">订单处理</el-menu-item>
         </el-menu>
       </el-col>
       <el-col :span="12">
@@ -18,6 +18,7 @@
         <el-menu class="el-menu-demo" mode="horizontal">
           <el-submenu index="5">
             <template slot="title">您好！{{ storeKeeper.sname }}店长</template>
+            <el-menu-item index="5-3" @click="dialogFormVisible = true">新增商品</el-menu-item>
             <el-menu-item index="5-1" @click="changeName">修改昵称</el-menu-item>
             <el-menu-item index="5-2" @click="changePassword">修改密码</el-menu-item>
             <el-menu-item index="5-5" @click="outLogin">退出登录</el-menu-item>
@@ -26,8 +27,7 @@
       </el-col>
     </el-row>
 
-
-    <el-button type="text" @click="dialogFormVisible = true">打开嵌套表单的 Dialog</el-button>
+    <!--    添加商品-->
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
       <el-form :model="goods">
         <el-form-item label="商品名" :label-width="formLabelWidth">
@@ -43,7 +43,6 @@
               :limit="1"
               :on-exceed="handleExceed"
               ref="pictureUpload"
-              :on-success="handleSuccess"
           >
             <i slot="default" class="el-icon-plus"></i>
             <div slot="file" slot-scope="{file}">
@@ -75,9 +74,10 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('form')">确 定</el-button>
+        <el-button type="primary" @click="submitForm()">确 定</el-button>
       </div>
     </el-dialog>
+    <!--    查看图片-->
     <el-dialog :visible.sync="dialogVisible">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
@@ -130,6 +130,167 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <el-row v-show="activeIndex==='1'">
+      <el-table
+          v-show="isLogin"
+          :data="goodsData"
+          border
+          style="margin: 30px">
+        <!--      fixed prop label width-->
+        <el-table-column
+            prop="srcurl"
+            label="商品图"
+            width="180">
+          <!--          <template slot-scope="scope">-->
+          <!--            <el-image :src="scope.srcurl"></el-image>-->
+          <!--          </template>-->
+          <template slot-scope="scope">
+            <el-image
+                fit="contain"
+                style="width: 150px; height: 150px"
+                :src="scope.row.srcurl"
+                :preview-src-list="[scope.row.srcurl]"></el-image>
+          </template>
+        </el-table-column>
+        <!--        <el-table-column-->
+        <!--            prop="sname"-->
+        <!--            label="店铺名称"-->
+        <!--            width="120">-->
+        <!--        </el-table-column>-->
+        <el-table-column
+            prop="goods.gname"
+            label="商品名"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gid"
+            label="商品id"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gsave"
+            label="库存"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gsales"
+            label="销售量"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gonlinenum"
+            label="在售"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            label="操作"
+            width="100">
+          <template slot-scope="scope">
+            <el-button @click="changeState(scope.row,'仓库中')" type="danger" size="small" v-if="!scope.row.isban">下架
+            </el-button>
+            <!--            <el-button @click="changeState(scope.row,false)" type="text" size="small" v-if="scope.row.isban">解除封禁</el-button>-->
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-row>
+
+
+    <el-row v-show="activeIndex==='2'">
+      <el-table
+          v-show="isLogin"
+          :data="goodsData"
+          border
+          style="margin: 30px">
+        <!--      fixed prop label width-->
+        <el-table-column
+            prop="srcurl"
+            label="商品图"
+            width="180">
+          <!--          <template slot-scope="scope">-->
+          <!--            <el-image :src="scope.srcurl"></el-image>-->
+          <!--          </template>-->
+          <template slot-scope="scope">
+            <el-image
+                fit="contain"
+                style="width: 150px; height: 150px"
+                :src="scope.row.srcurl"
+                :preview-src-list="[scope.row.srcurl]"></el-image>
+          </template>
+        </el-table-column>
+        <!--        <el-table-column-->
+        <!--            prop="sname"-->
+        <!--            label="店铺名称"-->
+        <!--            width="120">-->
+        <!--        </el-table-column>-->
+        <el-table-column
+            prop="goods.gname"
+            label="商品名"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gid"
+            label="商品id"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gsave"
+            label="库存"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gsales"
+            label="销售量"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            prop="goods.gonlinenum"
+            label="在售"
+            width="120">
+        </el-table-column>
+        <el-table-column
+            label="操作"
+            width="100">
+          <template slot-scope="scope">
+            <el-button @click="changeState(scope.row,'已上架')" type="success" size="small" v-if="!scope.row.isban">上架
+            </el-button>
+            <!--            <el-button @click="changeState(scope.row,false)" type="text" size="small" v-if="scope.row.isban">解除封禁</el-button>-->
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-row>
+    <el-row v-show="activeIndex==='3'">
+      <el-row v-for="(item,orderIndex) in ordersData" style="margin: 40px">
+        <el-card shadow="hover">
+          <el-descriptions title="订单信息">
+            <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
+            <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
+            <el-descriptions-item label="店铺id">{{ item.orders.sid }}</el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag size="small">{{ item.orders.ostate }}</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+          <!--          <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">-->
+          <!--            商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}-->
+          <!--          </div>-->
+          <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate=='待发货'"
+                     @click="finishOrders(orderIndex)">
+          </el-button>
+          <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate=='待发货'"
+                     disabled>完成配送
+          </el-button>
+          <!--          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'"-->
+          <!--                     @click="finishOrders(orderIndex)">完成订单-->
+          <!--          </el-button>-->
+          <!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
+          <!--            完成订单-->
+          <!--          </el-button>-->
+          <!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
+          <!--            取消配送-->
+          <!--          </el-button>-->
+        </el-card>
+      </el-row>
+    </el-row>
   </div>
 </template>
 
@@ -144,6 +305,7 @@ export default {
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
+      isLogin: false,
 
 
       dialogFormVisible: false,
@@ -172,11 +334,51 @@ export default {
         isban: false
       },
 
+
       goodsData: [],
+      ordersData: [],
 
     }
   },
   methods: {
+    toOnline(){
+      this.activeIndex='1';
+      axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
+        this.goodsData = resp.data;
+      })
+    },
+    toRepository(){
+      this.activeIndex='2';
+      // alert(this.activeIndex);
+      axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
+        this.goodsData = resp.data;
+      })
+    },
+    toOrders(){
+      this.activeIndex='3';
+      alert(this.activeIndex);
+
+    },
+    changeState(goods, state) {
+      // 改变商品state
+      goods.goods.state = state;
+      // console.log(goods.goods);
+      axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
+        if(this.activeIndex=='1')
+        {
+          axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
+            // 修改本地数据
+            this.goodsData = resp.data;
+          })
+        }else if(this.activeIndex=='2'){
+          axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
+            this.goodsData = resp.data;
+          })
+        }
+
+      })
+
+    },
     // 用户管理
     changeName() {
       // this.testInf = "changName";
@@ -242,6 +444,7 @@ export default {
       this.$router.push('/');
     },
 
+    // 文件处理
     handleRemove(file) {
       this.$refs.pictureUpload.handleRemove(file)
       this.goods.srcid = 0;
@@ -253,15 +456,8 @@ export default {
     handleExceed() {
       this.$message.error("只能上传一张封面");
     },
-    handleSuccess(resp) {
-      this.goods.srcid = resp;
-    },
-    getSid() {
-      this.inf = this.goods.srcid;
-    },
 
-
-    submitForm(formName) {
+    submitForm() {
       if (this.goods.gname == "") {
         this.$message.error("商品名不能为空");
       } else if (this.goods.gsave == "") {
@@ -314,6 +510,14 @@ export default {
   },
   created() {
     this.storeKeeper = this.$store.state.storeKeeper;
+    this.isLogin = true;
+    if (this.activeIndex == '1') {
+      axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
+        this.goodsData = resp.data;
+        // this.testInf=resp.data;
+      })
+
+    }
   }
 
 }
