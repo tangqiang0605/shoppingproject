@@ -1,7 +1,7 @@
 <template>
   <div>
 <!--    {{ delivery }}-->
-    {{ testInf }}
+<!--    {{ testInf }}-->
     <el-row>
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
@@ -55,12 +55,21 @@
           <!--          <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">-->
           <!--            商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}-->
           <!--          </div>-->
-          <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'"
+          <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate=='配送中'"
                      @click="finishOrders(orderIndex)">完成配送
           </el-button>
-          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">
-            取消配送
+          <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='配送中'"
+                     disabled>完成配送
           </el-button>
+<!--          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'"-->
+<!--                     @click="finishOrders(orderIndex)">完成订单-->
+<!--          </el-button>-->
+<!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
+<!--            完成订单-->
+<!--          </el-button>-->
+<!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
+<!--            取消配送-->
+<!--          </el-button>-->
         </el-card>
       </el-row>
     </el-row>
@@ -115,20 +124,25 @@ export default {
     },
     takeOrders(orderIndex) {
 
-      axios.get('http://localhost:8181/delivery/takeorders?oid=' + this.ordersCartsData1[orderIndex].orders.oid + "&did=" + this.delivery.did).then(resp => {
-        axios.get("http://localhost:8181/delivery/neworders").then(resp => {
-          this.ordersCartsData1.length = 0;
-          this.testInf = resp.data;
-          for (const index in resp.data) {
-            axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-              this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
-            })
-          }
-        })
+      axios.get('http://localhost:8181/delivery/takeorders?oid=' + this.ordersCartsData1[orderIndex].orders.oid + "&did=" + this.delivery.did).then(r => {
+        this.ordersCartsData1.splice(orderIndex,1);
+        // axios.get("http://localhost:8181/delivery/neworders").then(resp => {
+        //   this.ordersCartsData1.length = 0;
+        //   // this.testInf = resp.data;
+        //   for (const index in resp.data) {
+        //     axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+        //       this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
+        //     })
+        //   }
+        // })
       })
 
     },
     finishOrders(orderIndex){
+      axios.get('http://localhost:8181/delivery/finishorders?oid=' + this.ordersCartsData2[orderIndex].orders.oid).then(resp => {
+        this.ordersCartsData2[orderIndex].orders.ostate='已送达';
+      })
+
 
     }
 

@@ -76,10 +76,13 @@
           <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">
             商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}
           </div>
-          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'"
+<!--          未送达之前是没有完成按钮的，而完成后会显示不可操作的完成按钮-->
+          <el-button type="success" size="small" style="margin-top: 10px"
+                     v-show="item.orders.ostate=='已送达'||item.orders.ostate=='待取货'"
                      @click="finishOrders(orderIndex)">完成订单
           </el-button>
-          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">
+          <el-button type="success" size="small" style="margin-top: 10px" disabled
+                     v-show="item.orders.ostate=='已完成'">
             完成订单
           </el-button>
         </el-card>
@@ -219,16 +222,21 @@ export default {
     },
     finishOrders(ordersIndex) {
       // finish：订单完成
-      this.$confirm('请确认订单已送达, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        //   更新远程数据
-        axios.get('http://localhost:8181/customer/finishorders?oid=' + this.ordersCartsData[ordersIndex].orders.oid);
-        //   更新本地数据
-        this.ordersCartsData[ordersIndex].orders.ostate = "已完成";
-      }).catch();
+      var state=this.ordersCartsData[ordersIndex].orders.ostate;
+      if(state==='已送达'||state==='待取货'){
+        this.$confirm('请确认订单已签收, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          //   更新远程数据
+          axios.get('http://localhost:8181/customer/finishorders?oid=' + this.ordersCartsData[ordersIndex].orders.oid);
+          //   更新本地数据
+          this.ordersCartsData[ordersIndex].orders.ostate = "已完成";
+        }).catch();
+      }else{
+       // 整个if判断其实可以去掉
+      }
     }
 
 
