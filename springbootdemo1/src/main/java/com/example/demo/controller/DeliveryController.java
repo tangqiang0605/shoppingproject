@@ -1,13 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.Delivery;
+import com.example.demo.domain.Orders;
 import com.example.demo.mapper.DeliveryMapper;
 import com.example.demo.service.DeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("delivery")
@@ -15,6 +15,27 @@ public class DeliveryController {
 
     @Autowired
     private DeliveryService deliveryService;
+
+    @GetMapping("takeorders")
+    public void takeOrders(Integer oid,Integer did){
+        deliveryService.takeOrders(oid,did);
+    }
+
+    @GetMapping("finishorders")
+    public void takeOrders(Integer oid){
+        deliveryService.finishOrders(oid);
+    }
+
+
+    @GetMapping("neworders")
+    public List<Orders> getNewOrders(){
+        return deliveryService.getNewOrders();
+    }
+
+    @GetMapping("myorders")
+    public List<Orders> getMyOrders(Integer did){
+        return deliveryService.getMyOrders(did);
+    }
 
     @PostMapping("signup")
     public Integer signUp(@RequestBody Delivery delivery){

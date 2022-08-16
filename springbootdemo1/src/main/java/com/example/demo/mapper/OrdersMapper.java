@@ -11,8 +11,23 @@ import java.util.List;
 @Repository
 public interface OrdersMapper {
 
+    @Select("select * from orders where sid=#{sid}")
+    public List<Orders> findBySid(Integer sid);
+
+    @Select("select * from orders where oid=#{oid}")
+    public Orders findOrdersByOid(Integer oid);
+
+    @Select("select * from orders where did=#{did}")
+    public List<Orders> findByDid(Integer did);
+
+    @Select("select * from orders where ostate=#{ostate}")
+    public List<Orders> findByState(String ostate);
+
     @Update("update orders set ostate=#{ostate} where oid=#{oid}")
     public void updateOstateByOid(Integer oid,String ostate);
+
+    @Update("update orders set ostate=#{ostate},did=#{did} where oid=#{oid}")
+    public void updateDidByOid(Orders orders);
 
     @Select("select * from orders")
     public List<Orders> findAll();
