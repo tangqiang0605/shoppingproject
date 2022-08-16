@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface CartMapper {
 
+//    public List<>
+
     @Select("select * from shoppingcart where cid=#{cid} and gid=#{gid}")
     public Cart findRecord(Cart cart);
 

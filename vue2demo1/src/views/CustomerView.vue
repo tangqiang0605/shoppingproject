@@ -90,12 +90,6 @@ export default {
   },
   methods: {
     // 购物车操作
-    // plus(){
-    //
-    // },
-    // minus(){
-    //
-    // },
     changeAmount(shopIndex, cartIndex, isPlus) {
       var isDel = false;
       if (isPlus) {
@@ -132,8 +126,12 @@ export default {
         confirmButtonText: '快跑配送',
         cancelButtonText: '到店购买',
       }).then(() => {
-        alert('peisong');
-
+        // alert('peisong');
+        //更新远程数据
+        // axios.post()
+        // 更新本地数据
+        // 购物车删除订单
+        // 订单数据不用动，在切换toCart会自动更新
       }).catch(() => {
         alert('daodian');
       });

@@ -77,4 +77,15 @@ public class CustomerController {
     public void removeCarts(Integer cid,Integer sid){
         customerService.removeCarts(cid,sid);
     }
+
+    /**
+     * 支付，和删除商家订单removecarts差不多，多了一步记录在order和orderson表上。
+     * @param cid
+     * @param sid
+     * @param receiveWay
+     */
+    @GetMapping("pay")
+    public void pay(Integer cid,Integer sid,String receiveWay){
+        customerService.pay(cid,sid,receiveWay);
+    }
 }

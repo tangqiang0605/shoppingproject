@@ -1,12 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Cart;
-import com.example.demo.domain.Customer;
-import com.example.demo.domain.Shops;
-import com.example.demo.domain.ShowingCart;
+import com.example.demo.domain.*;
 import com.example.demo.mapper.CartMapper;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.mapper.GoodsMapper;
+import com.example.demo.mapper.OrdersMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +18,24 @@ public class CustomerService {
     private CartMapper cartMapper;
     @Autowired
     private GoodsMapper goodsMapper;
+    @Autowired
+    private OrdersMapper ordersMapper;
+
+    public void pay(Integer cid, Integer sid, String receiveWay) {
+//        确定购物车中是否有该店铺的商品
+        List<ShowingCart> carts = cartMapper.findCarts(cid, sid);
+        if (carts != null) {
+//        记录
+            Orders orders = new Orders(null, "待发货", null, cid, sid, receiveWay.equals("快跑配送"));
+            ordersMapper.insert(orders);
+            Integer oid = orders.getOid();
+            for (ShowingCart s : carts) {
+                ordersMapper.insertSon(oid, s.getGid(), s.getOamount());
+            }
+//        删除购物车
+        this.removeCarts(cid, sid);
+        }
+    }
 
     /**
      * 顾客操作，添加商品到cart表中。
@@ -39,7 +55,7 @@ public class CustomerService {
         return "已加入购物车";
     }
 
-    public void updateCart(Cart cart){
+    public void updateCart(Cart cart) {
         cartMapper.updateRecord(cart);
     }
 
