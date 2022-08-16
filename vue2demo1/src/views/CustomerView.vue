@@ -24,16 +24,10 @@
 
     <div>
       <el-dialog title="支付" :visible.sync="payVisible">
-
-        <el-form :model="customer">
-          <el-form-item label="用户id" label-width="120px">
-            <el-input v-model="customer.cid" autocomplete="off"></el-input>
-          </el-form-item>
-        </el-form>
-
+        请选择支付方式
         <div slot="footer" class="dialog-footer">
-          <el-button @click="pay()" size="small">到店购买</el-button>
-          <el-button type="primary" @click="customerLogin">快跑配送</el-button>
+          <el-button @click="afterbuy('到店购买')" size="small">到店购买</el-button>
+          <el-button type="primary" @click="afterbuy('快跑配送')" size="small">快跑配送</el-button>
         </div>
       </el-dialog>
     </div>
@@ -82,6 +76,7 @@ export default {
   data() {
     return {
       testInf: '',
+      shopIndex:0,
       payVisible:false,
       activeIndex: '1',
 
@@ -132,33 +127,22 @@ export default {
           } else {
             this.shopCartsData[shopIndex].carts.splice(cartIndex, 1);
           }
-        })
+        }).catch();
       } else {
         axios.post('http://localhost:8181/customer/updatecart', this.shopCartsData[shopIndex].carts[cartIndex]);
       }
     },
-    // buyafter(index){}
 
     buy(index) {
-      this.payVisible=true;
-
-      // 选择方式
-      this.$confirm('请选择配送方式', '支付订单', {
-        confirmButtonText: '快跑配送',
-        cancelButtonText: '到店购买',
-      }).then(() => {
-        //更新远程数据
-        axios.get("http://localhost:8181/customer/pay?cid="+this.customer.cid+"&sid="+this.shopCartsData[index].shop.sid+"&way='快跑配送'");
-        // 更新本地数据
-        // 购物车删除订单
-        this.shopCartsData.splice(index,1);
-        // 订单数据不用动，在切换toCart会自动更新
-      }).catch(() => {
-        axios.get("http://localhost:8181/customer/pay?cid="+this.customer.cid+"&sid="+this.shopCartsData[index].shop.sid+"&way='到店购买'");
-        this.shopCartsData.splice(index,1);
-      });
-
-
+      this.shopIndex = index;
+      this.payVisible = true;
+    },
+    afterbuy(way){
+      this.payVisible=false;
+      //更新远程数据
+      axios.get("http://localhost:8181/customer/pay?cid="+this.customer.cid+"&sid="+this.shopCartsData[this.shopIndex].shop.sid+"&way="+way);
+      // 更新本地数据
+      this.shopCartsData.splice(this.shopIndex,1);
     },
     removeShops(index) {
       this.$confirm('将从购物车删除该店的所有订单, 是否继续?', '提示', {
@@ -201,7 +185,7 @@ export default {
   },
 
   created() {
-    this.payVisible=true;
+    // this.payVisible=true;
 
 
     this.activeIndex = this.$route.query.activeIndex;
