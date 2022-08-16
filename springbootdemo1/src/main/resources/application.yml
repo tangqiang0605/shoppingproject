@@ -10,3 +10,4 @@ mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   type-aliases-package: com.example.demo.domain
 #  config-location:不知道是什么等有空百度后来补充
+mypassword: 1234

@@ -24,7 +24,6 @@
         </el-card>
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -54,32 +53,18 @@ export default {
   },
   methods:{
     addToCart(index) {
-
-      // console.log("add" + this.goodsData[index].goods.gid);
-      // console.log("add" + index);
-      // alert(this.$store.state.customer.cid);
-      // if (this.$store.state.customer.cid == 'undefined') {
-      // {cid:this.customer.cid,gid:this.goodsData[i]}
       this.cart.cid = this.customer.cid;
       this.cart.gid = this.goodsData[index].goods.gid;
       this.cart.oamount = 1;
-
-
-
       if (this.isLogin) {
         axios.post('http://localhost:8181/customer/addToCart', this.cart).then(resp => {
-          // alert(resp.data);
           this.$message({
             message: resp.data,
             type: 'success'
           });
         })
-
-
       } else {
         this.$message.error("请先登录账号");
-        // this.customerLoginVisible = true;
-
       }
     }
   },
@@ -94,9 +79,6 @@ export default {
     axios.get("http://localhost:8181/goods/shop?sid="+this.sid).then(resp => {
       this.goodsData = resp.data;
       this.sname=resp.data[0].sname;
-      // axios.get('http://localhost:8181/goods/shops').then(resp => {
-      //   this.shopsData = resp.data;
-      // })
     })
   }
 

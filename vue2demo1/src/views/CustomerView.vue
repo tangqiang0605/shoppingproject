@@ -218,7 +218,7 @@ export default {
       })
     },
     finishOrders(ordersIndex) {
-      // todo：订单完成
+      // finish：订单完成
       this.$confirm('请确认订单已送达, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
