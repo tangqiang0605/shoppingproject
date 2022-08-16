@@ -2,10 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.domain.Orders;
 import com.example.demo.domain.ShowingCart;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +10,9 @@ import java.util.List;
 @Mapper
 @Repository
 public interface OrdersMapper {
+
+    @Update("update orders set ostate=#{ostate} where oid=#{oid}")
+    public void updateOstateByOid(Integer oid,String ostate);
 
     @Select("select * from orders")
     public List<Orders> findAll();

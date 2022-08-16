@@ -703,7 +703,7 @@ export default {
     // alert(this.shopsData.isEmpty());
     // alert(this.shopsData==null);
     // 设置布局
-    this.activeIndex = '2';
+    // this.activeIndex = '2';
     if (this.activeIndex == '1') {
       this.searchHint = this.searchText[0];
     } else if (this.activeIndex == '2') {

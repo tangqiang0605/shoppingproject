@@ -25,6 +25,10 @@ public class CustomerService {
 
     public List<ShowingCart> getOrderson(Integer oid){return ordersMapper.findByOid(oid);}
 
+    public void finishOrders(Integer oid){
+        ordersMapper.updateOstateByOid(oid,"已完成");
+    }
+
     public void pay(Integer cid, Integer sid, String receiveWay) {
 //        确定购物车中是否有该店铺的商品
         List<ShowingCart> carts = cartMapper.findCarts(cid, sid);

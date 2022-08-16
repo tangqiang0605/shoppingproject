@@ -25,7 +25,8 @@ public class CustomerController {
     @GetMapping("getorderson")
     private List<ShowingCart> getOrderson(Integer oid){return customerService.getOrderson(oid);}
 
-//    private
+    @GetMapping("finishorders")
+    private void finishOrders(Integer oid){customerService.finishOrders(oid);}
 
     /**
      * 账号管理：注册

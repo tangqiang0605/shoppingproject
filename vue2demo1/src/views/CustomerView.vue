@@ -65,17 +65,15 @@
     <el-row v-show="activeIndex==='2'">
       <el-row v-for="(item,orderIndex) in ordersCartsData" style="margin: 40px">
         <el-card shadow="hover">
-<!--          <p>{{item}}</p>-->
       <el-descriptions title="订单信息">
         <el-descriptions-item label="订单号">{{item.orders.oid}}</el-descriptions-item>
 <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
         <el-descriptions-item label="店铺id">{{item.orders.sid}}</el-descriptions-item>
         <el-descriptions-item label="状态"><el-tag size="small">{{item.orders.ostate}}</el-tag></el-descriptions-item>
-
       </el-descriptions>
         <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">商品{{index+1}}:{{cart.gname}}&emsp;数量：{{cart.oamount}}</div>
-          <el-button type="success" size="small" style="margin-top: 10px" v-if="item.orders.ostate!='已完成'" @click="finishOrders(orderIndex)">完成订单</el-button>
-          <el-button type="success" size="small" style="margin-top: 10px" disabled v-if="item.orders.ostate=='已完成'">完成订单</el-button>
+          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'" @click="finishOrders(orderIndex)">完成订单</el-button>
+          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">完成订单</el-button>
         </el-card></el-row>
     </el-row>
   </div>
@@ -168,8 +166,7 @@ export default {
         axios.get('http://localhost:8181/customer/removecarts?cid=' + this.customer.cid + '&sid=' + this.shopCartsData[index].shop.sid);
         //   更新本地数据
         this.shopCartsData.splice(index, 1);
-      }).catch(() => {
-      });
+      }).catch();
     },
 
     //导航栏
@@ -198,9 +195,16 @@ export default {
     },
     finishOrders(ordersIndex){
       // todo：订单完成
-      // 更新远程
-      // axios.get('customer/')
-      // 更新本地
+      this.$confirm('请确认订单已送达, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //   更新远程数据
+        axios.get('http://localhost:8181/customer/finishorders?oid=' + this.ordersCartsData[ordersIndex].orders.oid);
+        //   更新本地数据
+        this.ordersCartsData[ordersIndex].orders.ostate="已完成";
+      }).catch();
     }
 
 
