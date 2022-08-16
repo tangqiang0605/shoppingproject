@@ -63,7 +63,20 @@
     </el-row>
 
     <el-row v-show="activeIndex==='2'">
-      dingdan
+      <el-row v-for="(item,orderIndex) in ordersCartsData" style="margin: 40px">
+        <el-card shadow="hover">
+<!--          <p>{{item}}</p>-->
+      <el-descriptions title="订单信息">
+        <el-descriptions-item label="订单号">{{item.orders.oid}}</el-descriptions-item>
+<!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
+        <el-descriptions-item label="店铺id">{{item.orders.sid}}</el-descriptions-item>
+        <el-descriptions-item label="状态"><el-tag size="small">{{item.orders.ostate}}</el-tag></el-descriptions-item>
+
+      </el-descriptions>
+        <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">商品{{index+1}}:{{cart.gname}}&emsp;数量：{{cart.oamount}}</div>
+          <el-button type="success" size="small" style="margin-top: 10px" v-if="item.orders.ostate!='已完成'" @click="finishOrders(orderIndex)">完成订单</el-button>
+          <el-button type="success" size="small" style="margin-top: 10px" disabled v-if="item.orders.ostate=='已完成'">完成订单</el-button>
+        </el-card></el-row>
     </el-row>
   </div>
 </template>
@@ -95,7 +108,7 @@ export default {
       // shopsData: [],
       // cartsData: [],
       shopCartsData: [],
-      orderData: [],
+      ordersCartsData: [],
 
     }
 
@@ -173,15 +186,22 @@ export default {
     },
     toOrder() {
       this.activeIndex = '2';
-
-      // 从服务器获取店铺信息
-      // if (this.shopsData.length == 0) {
-      // axios.get('http://localhost:8181/goods/shops').then(resp => {
-      //   this.shopsData = resp.data;
-      //   this.testInf = this.shopsData;
-      // })
-      // }
+      axios.get("http://localhost:8181/customer/getorders?cid=" + this.customer.cid).then(resp => {
+        this.ordersCartsData.length = 0;
+        for (const index in resp.data) {
+          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+            this.ordersCartsData.push({orders: resp.data[index], carts: resp1.data});
+          })
+        }
+      })
     },
+    finishOrders(ordersIndex){
+      // 更新远程
+      // axios.get('customer/')
+      // 更新本地
+    }
+
+
   },
 
   created() {
@@ -191,28 +211,24 @@ export default {
     this.activeIndex = this.$route.query.activeIndex;
     this.customer = this.$store.state.customer;
     if (this.activeIndex === '1') {
-
-
       // 从服务器获取商品信息
       axios.get("http://localhost:8181/customer/findshops?cid=" + this.customer.cid).then(resp => {
-        this.testInf = '';
-        // finish：更快的方法清空数组
-        // this.shopCartsData=[];
-        // this.shopCartsData.splice(0,this.shopCartsData.length);
         this.shopCartsData.length = 0;
         for (const index in resp.data) {
-          // this.testInf = resp.data[index].sid;
           axios.get('http://localhost:8181/customer/findcarts?cid=' + this.customer.cid + '&sid=' + resp.data[index].sid).then(resp1 => {
-            // this.cartsData.push(resp1.data);
-            // this.testInf=this.testInf+index+resp1.data[0].gid;
-            // console.log({shop: resp.data[index], carts: resp1.data});
             this.shopCartsData.push({shop: resp.data[index], carts: resp1.data});
           })
         }
-        // this.shopsData = resp.data;
       })
     } else if (this.activeIndex === '2') {
-
+      axios.get("http://localhost:8181/customer/getorders?cid=" + this.customer.cid).then(resp => {
+        this.ordersCartsData.length = 0;
+        for (const index in resp.data) {
+          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+            this.ordersCartsData.push({orders: resp.data[index], carts: resp1.data});
+          })
+        }
+      })
     } else {
 
     }

@@ -1,9 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.Cart;
-import com.example.demo.domain.Customer;
-import com.example.demo.domain.Shops;
-import com.example.demo.domain.ShowingCart;
+import com.example.demo.domain.*;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.GoodsService;
@@ -19,6 +16,16 @@ public class CustomerController {
     private CustomerService customerService;
     @Autowired
     private GoodsService goodsService;
+
+    @GetMapping("getorders")
+    private List<Orders> getOrders(Integer cid){
+        return customerService.getOrders(cid);
+    }
+
+    @GetMapping("getorderson")
+    private List<ShowingCart> getOrderson(Integer oid){return customerService.getOrderson(oid);}
+
+//    private
 
     /**
      * 账号管理：注册

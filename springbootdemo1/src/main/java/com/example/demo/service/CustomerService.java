@@ -21,6 +21,10 @@ public class CustomerService {
     @Autowired
     private OrdersMapper ordersMapper;
 
+    public List<Orders> getOrders(Integer cid){return ordersMapper.findByCid(cid);}
+
+    public List<ShowingCart> getOrderson(Integer oid){return ordersMapper.findByOid(oid);}
+
     public void pay(Integer cid, Integer sid, String receiveWay) {
 //        确定购物车中是否有该店铺的商品
         List<ShowingCart> carts = cartMapper.findCarts(cid, sid);
