@@ -12,6 +12,18 @@ import java.util.List;
 @Repository
 public interface GoodsMapper {
 
+    //    /**
+//     * 售出商品，减少在线数量，增加销售数量。update够用了。
+//     */
+//    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},#{gname},#{gonlinenum},#{time})")
+//    public void insert(Goods goods);
+
+    @Update("update goods set gsales=#{gsales},state=#{state},gonlinenum=#{gonlinenum} where gid=#{gid}")
+    public void exchange(Goods goods);
+
+    @Select("select * from goods where gid=#{gid}")
+    public Goods findByGid(Integer gid);
+
     @Select("select gid from goods where sid=#{sid}")
     public List<Integer> findByShop(Integer sid);
 

@@ -8,6 +8,7 @@ import com.example.demo.mapper.OrdersMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -21,28 +22,63 @@ public class CustomerService {
     @Autowired
     private OrdersMapper ordersMapper;
 
-    public List<Orders> getOrders(Integer cid){return ordersMapper.findByCid(cid);}
-
-    public List<ShowingCart> getOrderson(Integer oid){return ordersMapper.findByOid(oid);}
-
-    public void finishOrders(Integer oid){
-        ordersMapper.updateOstateByOid(oid,"已完成");
+    public List<Orders> getOrders(Integer cid) {
+        return ordersMapper.findByCid(cid);
     }
 
-    public void pay(Integer cid, Integer sid, String receiveWay) {
+    public List<ShowingCart> getOrderson(Integer oid) {
+        return ordersMapper.findByOid(oid);
+    }
+
+    public void finishOrders(Integer oid) {
+        ordersMapper.updateOstateByOid(oid, "已完成");
+    }
+
+    /**
+     * 库存检查
+     *
+     * @return
+     */
+    public List<String> detectAmount(List<ShowingCart> showingCarts) {
+        List<String> result = new LinkedList<>();
+        for (ShowingCart showingCart : showingCarts) {
+            Goods byGid = goodsMapper.findByGid(showingCart.getGid());
+            if (showingCart.getOamount() > byGid.getGonlinenum()) {
+                result.add("商品***" + byGid.getGname() + "***的库存仅为" + byGid.getGonlinenum() + "件");
+            }
+        }
+        return result;
+    }
+
+    public String pay(Integer cid, Integer sid, String receiveWay) {
 //        确定购物车中是否有该店铺的商品
+//        List<ShowingGoods> showingGoods=new LinkedList<>();
+        String result=new String();
         List<ShowingCart> carts = cartMapper.findCarts(cid, sid);
         if (carts != null) {
-//        记录
+//        添加记录到orders和orderson
             Orders orders = new Orders(null, "待发货", null, cid, sid, receiveWay.equals("快跑配送"));
             ordersMapper.insert(orders);
             Integer oid = orders.getOid();
             for (ShowingCart s : carts) {
                 ordersMapper.insertSon(oid, s.getGid(), s.getOamount());
+                //            商品在线数量减少，销售量增加。
+                Goods byGid = goodsMapper.findByGid(s.getGid());
+//                ==比较地址，equals比较值
+                if (s.getOamount().equals(byGid.getGonlinenum())) {
+//                    如果商品售出后在线数量为0，下架商品。
+                    byGid.setState("仓库中");
+//                    showingGoods.add()
+                    result="商品下架";
+                }
+                byGid.setGonlinenum(byGid.getGonlinenum()-s.getOamount());
+                byGid.setGsales(byGid.getGsales()+s.getOamount());
+                goodsMapper.exchange(byGid);
             }
 //        删除购物车
-        this.removeCarts(cid, sid);
+            this.removeCarts(cid, sid);
         }
+        return result;
     }
 
     /**

@@ -65,16 +65,25 @@
     <el-row v-show="activeIndex==='2'">
       <el-row v-for="(item,orderIndex) in ordersCartsData" style="margin: 40px">
         <el-card shadow="hover">
-      <el-descriptions title="订单信息">
-        <el-descriptions-item label="订单号">{{item.orders.oid}}</el-descriptions-item>
-<!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
-        <el-descriptions-item label="店铺id">{{item.orders.sid}}</el-descriptions-item>
-        <el-descriptions-item label="状态"><el-tag size="small">{{item.orders.ostate}}</el-tag></el-descriptions-item>
-      </el-descriptions>
-        <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">商品{{index+1}}:{{cart.gname}}&emsp;数量：{{cart.oamount}}</div>
-          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'" @click="finishOrders(orderIndex)">完成订单</el-button>
-          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">完成订单</el-button>
-        </el-card></el-row>
+          <el-descriptions title="订单信息">
+            <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
+            <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
+            <el-descriptions-item label="店铺id">{{ item.orders.sid }}</el-descriptions-item>
+            <el-descriptions-item label="状态">
+              <el-tag size="small">{{ item.orders.ostate }}</el-tag>
+            </el-descriptions-item>
+          </el-descriptions>
+          <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">
+            商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}
+          </div>
+          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'"
+                     @click="finishOrders(orderIndex)">完成订单
+          </el-button>
+          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">
+            完成订单
+          </el-button>
+        </el-card>
+      </el-row>
     </el-row>
   </div>
 </template>
@@ -87,8 +96,8 @@ export default {
   data() {
     return {
       testInf: '',
-      shopIndex:0,
-      payVisible:false,
+      shopIndex: 0,
+      payVisible: false,
       activeIndex: '1',
 
       // 数据实体
@@ -116,7 +125,6 @@ export default {
     changeAmount(shopIndex, cartIndex, isPlus) {
       var isDel = false;
       if (isPlus) {
-        // alert(this.cartsData[shopIndex]);
         // this.cartsData[shopIndex][cartIndex].oamount += 1;
         this.shopCartsData[shopIndex].carts[cartIndex].oamount++;
       } else if (this.shopCartsData[shopIndex].carts[cartIndex].oamount != 1) {
@@ -148,13 +156,29 @@ export default {
       this.shopIndex = index;
       this.payVisible = true;
     },
-    afterbuy(way){
-      // todo：尝试购买，确认数量是否充足。更新远程数据时，接口那里除了删除购物车记录，还要视图下架商品。
-      this.payVisible=false;
-      //更新远程数据
-      axios.get("http://localhost:8181/customer/pay?cid="+this.customer.cid+"&sid="+this.shopCartsData[this.shopIndex].shop.sid+"&way="+way);
-      // 更新本地数据
-      this.shopCartsData.splice(this.shopIndex,1);
+    afterbuy(way) {
+      // finish：尝试购买，确认数量是否充足。更新远程数据时，接口那里除了删除购物车记录，还要视图下架商品。
+      // finish：前端要更新本地是否有下架的
+      axios.post('http://localhost:8181/customer/detectamount', this.shopCartsData[this.shopIndex].carts).then(resp => {
+        console.log(resp.data);
+        if (resp.data.length != 0) {
+
+          for (const index in resp.data) {
+            this.$message.error('支付失败！' + resp.data[index]);
+          }
+        } else {
+          //更新远程数据
+          axios.get("http://localhost:8181/customer/pay?cid=" + this.customer.cid + "&sid=" + this.shopCartsData[this.shopIndex].shop.sid + "&way=" + way);
+          // 更新本地数据
+          this.shopCartsData.splice(this.shopIndex, 1);
+        }
+        this.payVisible = false;
+      })
+      // this.shopCartsData[this.shopIndex].carts
+
+      // xx库存不足，剩余x件。
+
+
     },
     removeShops(index) {
       this.$confirm('将从购物车删除该店的所有订单, 是否继续?', '提示', {
@@ -193,7 +217,7 @@ export default {
         }
       })
     },
-    finishOrders(ordersIndex){
+    finishOrders(ordersIndex) {
       // todo：订单完成
       this.$confirm('请确认订单已送达, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -203,7 +227,7 @@ export default {
         //   更新远程数据
         axios.get('http://localhost:8181/customer/finishorders?oid=' + this.ordersCartsData[ordersIndex].orders.oid);
         //   更新本地数据
-        this.ordersCartsData[ordersIndex].orders.ostate="已完成";
+        this.ordersCartsData[ordersIndex].orders.ostate = "已完成";
       }).catch();
     }
 
