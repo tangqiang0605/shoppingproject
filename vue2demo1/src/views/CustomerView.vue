@@ -151,6 +151,7 @@ export default {
       this.payVisible = true;
     },
     afterbuy(way){
+      // todo：尝试购买，确认数量是否充足。更新远程数据时，接口那里除了删除购物车记录，还要视图下架商品。
       this.payVisible=false;
       //更新远程数据
       axios.get("http://localhost:8181/customer/pay?cid="+this.customer.cid+"&sid="+this.shopCartsData[this.shopIndex].shop.sid+"&way="+way);
@@ -196,6 +197,7 @@ export default {
       })
     },
     finishOrders(ordersIndex){
+      // todo：订单完成
       // 更新远程
       // axios.get('customer/')
       // 更新本地
