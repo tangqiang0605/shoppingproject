@@ -85,7 +85,7 @@ public class CustomerController {
      * @param receiveWay
      */
     @GetMapping("pay")
-    public void pay(Integer cid,Integer sid,String receiveWay){
+    public void pay(Integer cid,Integer sid,@RequestParam("way") String receiveWay){
         customerService.pay(cid,sid,receiveWay);
     }
 }
