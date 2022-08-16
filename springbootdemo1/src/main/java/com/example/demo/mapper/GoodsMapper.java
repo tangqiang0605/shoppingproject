@@ -12,6 +12,8 @@ import java.util.List;
 @Repository
 public interface GoodsMapper {
 
+    @Select("select gid from goods where sid=#{sid}")
+    public List<Integer> findByShop(Integer sid);
 
     @Select("select s.sid,s.sname,sum(gsales) totalsales,count(gid) onlinegoodsnum\n" +
             "    from storekeeper as s,goods\n" +

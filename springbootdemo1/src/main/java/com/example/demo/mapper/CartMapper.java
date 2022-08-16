@@ -3,10 +3,7 @@ package com.example.demo.mapper;
 import com.example.demo.domain.Cart;
 import com.example.demo.domain.Shops;
 import com.example.demo.domain.ShowingCart;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,5 +33,8 @@ public interface CartMapper {
 
     @Select("select * from shoppingcart s,src,goods g where src.srcid=g.srcid and cid=#{cid} and g.gid=s.gid and sid=#{sid}")
     public List<ShowingCart> findCarts(Integer cid,Integer sid);
+
+    @Delete("delete from shoppingcart where gid=#{gid}")
+    public void delByGid(Integer gid);
 
 }

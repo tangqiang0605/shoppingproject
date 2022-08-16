@@ -29,11 +29,13 @@ class DemoApplicationTests {
 	@Test
 	void t4CustomerService(){
 //		System.out.println(cartMapper.findAll());
-		List<Shops> shops = customerService.findShops(1);
-		for (Shops s:shops
-			 ) {
-			System.out.println(customerService.findCarts(1, s.getSid()));
-		}
+//		List<Shops> shops = customerService.findShops(1);
+//		for (Shops s:shops
+//			 ) {
+//			System.out.println(customerService.findCarts(1, s.getSid()));
+//		}
+		customerService.removeCarts(1,100);
+
 
 //		System.out.println();
 	}

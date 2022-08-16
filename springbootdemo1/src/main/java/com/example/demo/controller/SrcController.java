@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -28,6 +29,13 @@ public class SrcController {
     private SrcService srcService;
 
     private static final String ip="http://localhost:";
+
+//    @PostMapping("testpost")
+//    public void postTest(@RequestBody Map<String,Object> postContext){
+////        return (Integer)postContext.get("sid") + (Integer)postContext.get("gid");
+//        System.out.println(postContext.get("sid"));
+////        return sid+gid;
+//    }
 
     @PostMapping("upload")
     public int upload(MultipartFile file) throws IOException {

@@ -22,44 +22,36 @@
       </el-col>
     </el-row>
 
+
     <el-row v-show="activeIndex==='1'">
-      <el-row v-for="(item,index) in shopsData" style="margin: 40px">
+      <el-row v-for="(item,index) in shopCartsData" style="margin: 40px">
         <el-card shadow="hover">
           <el-row>
-            <h4>{{ item.sname }}</h4>
+            <h4>{{ item.shop.sname }}</h4>
+            <!--            <h4>{{ item.carts.length}}</h4>-->
           </el-row>
-          <el-row v-for="(cart,cartIndex) in cartsData[index]" style="height: 150px">
-            <el-col span="6">
+          <el-row v-for="(cart,cartIndex) in item.carts" style="height: 150px">
+            <el-col :span="6">
               <el-image :src="cart.srcurl" style="height: 120px" fit="contain"></el-image>
             </el-col>
-            <el-col span="10">
+            <el-col :span="10">
               <div>
-                <!--              {{ cart }}-->
                 <h3>{{ cart.gname }}</h3>
                 已选数量：
                 <el-button icon="el-icon-minus" @click="changeAmount(index,cartIndex,false)"></el-button>
                 &nbsp;&nbsp;{{ cart.oamount }}
                 <el-button icon="el-icon-plus" @click="changeAmount(index,cartIndex,true)"></el-button>
-                <!--        {{cart.gname}}{{cart.oamount}}{{cart.srcurl}}-->
               </div>
             </el-col>
-            <el-col span="4" style="margin-top: 50px">
-              <!--              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>-->
-              <!--              <el-button type="text" size="small">减少</el-button>-->
-              <!--              <el-button type="text" size="small">增加</el-button>-->
-
+            <el-col :span="4" style="margin-top: 50px">
             </el-col>
           </el-row>
-
-          <!--        <el-button-->
-          <!--            size="mini"-->
-          <!--            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>-->
           <el-button type="danger" @click="removeShops(index)">删除订单</el-button>
-          <!--          @click="handleDelete(scope.$index, scope.row)"-->
           <el-button type="primary" @click="buy(index)">支付订单</el-button>
         </el-card>
       </el-row>
     </el-row>
+
     <el-row v-show="activeIndex==='2'">
       dingdan
     </el-row>
@@ -88,8 +80,8 @@ export default {
         cname: '',
         cpassword: ''
       },
-      shopsData: [],
-      cartsData: [],
+      // shopsData: [],
+      // cartsData: [],
       shopCartsData: [],
       orderData: [],
 
@@ -108,20 +100,31 @@ export default {
       var isDel = false;
       if (isPlus) {
         // alert(this.cartsData[shopIndex]);
-        this.cartsData[shopIndex][cartIndex].oamount += 1;
-      } else if (this.cartsData[shopIndex][cartIndex].oamount != 1) {
-        this.cartsData[shopIndex][cartIndex].oamount -= 1;
+        // this.cartsData[shopIndex][cartIndex].oamount += 1;
+        this.shopCartsData[shopIndex].carts[cartIndex].oamount++;
+      } else if (this.shopCartsData[shopIndex].carts[cartIndex].oamount != 1) {
+        this.shopCartsData[shopIndex].carts[cartIndex].oamount--;
       } else {
         isDel = true;
       }
       if (isDel) {
-        alert("删除");
-        // 删除
+        this.$confirm('将从购物车移除该商品, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          //   更新远程数据
+          axios.get('http://localhost:8181/customer/removeacart?gid=' + this.shopCartsData[shopIndex].carts[cartIndex].gid);
+          //   更新本地数据
+          if (this.shopCartsData[shopIndex].carts.length == 1) {
+            this.shopCartsData.splice(shopIndex, 1);
+          } else {
+            this.shopCartsData[shopIndex].carts.splice(cartIndex, 1);
+          }
+        })
       } else {
-        // 提交
+        axios.post('http://localhost:8181/customer/updatecart', this.shopCartsData[shopIndex].carts[cartIndex]);
       }
-
-
     },
     buy(index) {
       // 选择方式
@@ -138,24 +141,16 @@ export default {
 
     },
     removeShops(index) {
-      this.$confirm('此操作将永久删除该订单, 是否继续?', '提示', {
+      this.$confirm('将从购物车删除该店的所有订单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-      // 更新远程数据
-      //   更新本地数据
-        this.shopsData.splice(index, 1);
-
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        //   更新远程数据
+        axios.get('http://localhost:8181/customer/removecarts?cid=' + this.customer.cid + '&sid=' + this.shopCartsData[index].shop.sid);
+        //   更新本地数据
+        this.shopCartsData.splice(index, 1);
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
       });
     },
 
@@ -163,29 +158,14 @@ export default {
     // 导航栏切换
     toCart() {
       this.activeIndex = '1';
-
-      // 从服务器获取商品信息
-      // if (this.goodsData.length == 0) {
       axios.get("http://localhost:8181/customer/findshops?cid=" + this.customer.cid).then(resp => {
-        this.shopsData = resp.data;
-        this.testInf = this.shopsData;
-        for (const index in this.shopsData) {
-          console.log(this.shopsData[index].sid);
-          axios.get('http://localhost:8181/customer/findcarts?cid=' + this.customer.cid + '&sid=' + this.shopsData[index].sid).then(resp1 => {
-            // this.shopCartsData.push({shop:this.shopsData,carts:resp1.data});
-            // this.testInf=this.shopCartsData;
-            // this.cartData=[];
-            // this.cartData.push(resp1.data);
-            this.cartsData.push(resp1.data);
+        this.shopCartsData.length = 0;
+        for (const index in resp.data) {
+          axios.get('http://localhost:8181/customer/findcarts?cid=' + this.customer.cid + '&sid=' + resp.data[index].sid).then(resp1 => {
+            this.shopCartsData.push({shop: resp.data[index], carts: resp1.data});
           })
-
         }
-        // for () {
-
-
-        // }
       })
-      // }
     },
     toOrder() {
       this.activeIndex = '2';
@@ -205,13 +185,34 @@ export default {
     this.customer = this.$store.state.customer;
     if (this.activeIndex === '1') {
 
+
+      // 从服务器获取商品信息
+      axios.get("http://localhost:8181/customer/findshops?cid=" + this.customer.cid).then(resp => {
+        this.testInf = '';
+        // finish：更快的方法清空数组
+        // this.shopCartsData=[];
+        // this.shopCartsData.splice(0,this.shopCartsData.length);
+        this.shopCartsData.length = 0;
+        for (const index in resp.data) {
+          // this.testInf = resp.data[index].sid;
+          axios.get('http://localhost:8181/customer/findcarts?cid=' + this.customer.cid + '&sid=' + resp.data[index].sid).then(resp1 => {
+            // this.cartsData.push(resp1.data);
+            // this.testInf=this.testInf+index+resp1.data[0].gid;
+            // console.log({shop: resp.data[index], carts: resp1.data});
+            this.shopCartsData.push({shop: resp.data[index], carts: resp1.data});
+          })
+        }
+        // this.shopsData = resp.data;
+      })
     } else if (this.activeIndex === '2') {
 
     } else {
 
     }
 
-  }
+  },
+
+
 }
 </script>
 

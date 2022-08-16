@@ -50,32 +50,6 @@ public class GoodsService {
         return goodsMapper.searchShops(sname);
     }
 
-    /**
-     * 店主操作，添加商品到goods表中。
-     *
-     * @param goods
-     * @return
-     */
-    public int add(Goods goods) {
-        goodsMapper.insert(goods);
-        return goods.getGid();
-    }
-
-    /**
-     * 顾客操作，添加商品到cart表中。
-     *
-     * @param cart{cid,gid,oamount}
-     */
-    public String addToCart(Cart cart) {
-        Cart record = cartMapper.findRecord(cart);
-        if (record == null) {
-            cartMapper.insert(cart);
-        } else {
-            cart.setOamount(cart.getOamount() + record.getOamount());
-            cartMapper.updateRecord(cart);
-        }
-        return "已加入购物车";
-    }
 
     public List<ShowingGoods> showShop(Integer sid) {
         return goodsMapper.findBySid(sid);

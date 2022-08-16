@@ -56,7 +56,7 @@ public class CustomerController {
 
     @PostMapping("addToCart")
     public String addToCart(@RequestBody Cart cart){
-        return goodsService.addToCart(cart);
+        return customerService.addToCart(cart);
     }
 
     @GetMapping("findshops")
@@ -64,4 +64,17 @@ public class CustomerController {
 
     @GetMapping("findcarts")
     public List<ShowingCart> findCart(Integer cid,Integer sid){return customerService.findCarts(cid,sid);}
+
+    @GetMapping("removeacart")
+    public void removeACart(Integer gid){
+        customerService.removeACart(gid);
+    }
+
+    @PostMapping("updatecart")
+    public void updateCart(@RequestBody Cart cart){customerService.updateCart(cart);}
+
+    @GetMapping("removecarts")
+    public void removeCarts(Integer cid,Integer sid){
+        customerService.removeCarts(cid,sid);
+    }
 }

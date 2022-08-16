@@ -20,6 +20,17 @@ public class StoreKeeperService {
     @Autowired
     private StoreKeeperMapper storeKeeperMapper;
 
+    /**
+     * 店主操作，添加商品到goods表中。
+     *
+     * @param goods
+     * @return
+     */
+    public int add(Goods goods) {
+        goodsMapper.insert(goods);
+        return goods.getGid();
+    }
+
     public Integer signUp(StoreKeeper storeKeeper){
         storeKeeperMapper.insert(storeKeeper);
         return storeKeeper.getSid();
