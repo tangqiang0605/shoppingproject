@@ -9,6 +9,9 @@ import com.example.demo.mapper.GoodsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -68,13 +71,34 @@ public class GoodsService {
         byGid.setState(state);
         goodsMapper.exchange(byGid);
     }
-//    public void exchange(Integer gid){
+
+    //    public void exchange(Integer gid){
 //        Goods byGid = goodsMapper.findByGid(gid);
 //        Integer temp=byGid.getGsave();
 //        byGid.setGsave(byGid.getGonlinenum());
 //        byGid.setGonlinenum(temp);
 //        goodsMapper.exchange(byGid);
 //    }
+    public void setGoodsTime(Integer gid, Long time){
+//        String strTime = "1660807830000";
+//        Long longTime = Long.parseLong(strTime);
+        if(time==0||time==null){
+//            goodsService.setGoodsTime();
+            goodsMapper.updateTimeByGid(gid,null);
+        }else{
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateString = formatter.format(time);
+        Date newTime = null;
+        try {
+            newTime = formatter.parse(dateString);
+        } catch (ParseException e) {
+//            e.printStackTrace();
+            System.out.println("GoodsService.setGoodsTime报错啦！！！");
+        }
+        goodsMapper.updateTimeByGid(gid,newTime);
+        }
+    }
 
     public List<ShowingGoods> showShop(Integer sid) {
         return goodsMapper.findBySid(sid, "已上架");
@@ -82,7 +106,7 @@ public class GoodsService {
 
 
     public List<ShowingGoods> searchGoods(String gname) {
-        return goodsMapper.searchByName(gname,"已上架");
+        return goodsMapper.searchByName(gname, "已上架");
     }
 
 }

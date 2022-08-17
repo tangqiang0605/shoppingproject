@@ -24,7 +24,7 @@ public interface GoodsMapper {
     @Update("update goods set state=#{state} where gid=#{gid}")
     public void updateState(Integer gid,String state);
 
-    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},gonlinenum=#{gonlinenum} where gid=#{gid}")
+    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},gonlinenum=#{gonlinenum} where gid=#{gid}")
     public void exchange(Goods goods);
 
     @Select("select * from goods where gid=#{gid}")
@@ -61,6 +61,7 @@ public interface GoodsMapper {
             @Result(column = "gsales", property = "goods.gsales"),
             @Result(column = "gname", property = "goods.gname"),
             @Result(column = "gonlinenum", property = "goods.gonlinenum"),
+            @Result(column = "time", property = "goods.time"),
     })
     public List<ShowingGoods> show();
 
@@ -73,10 +74,11 @@ public interface GoodsMapper {
             @Result(column = "srcurl", property = "srcurl"),
             @Result(column = "sname", property = "sname"),
             @Result(column = "gid", property = "goods.gid"),
+            @Result(column = "state",property = "goods.state"),
             @Result(column = "gsave",property = "goods.gsave"),
             @Result(column = "gsales", property = "goods.gsales"),
             @Result(column = "sid", property = "goods.sid"),
-//            @Result(column = "gsales", property = "goods.gsales"),
+            @Result(column = "gsales", property = "goods.gsales"),
             @Result(column = "gname", property = "goods.gname"),
             @Result(column = "gonlinenum", property = "goods.gonlinenum"),
             @Result(column = "time", property = "goods.time"),
@@ -124,6 +126,7 @@ public interface GoodsMapper {
             @Result(column = "gsales", property = "goods.gsales"),
             @Result(column = "gname", property = "goods.gname"),
             @Result(column = "gonlinenum", property = "goods.gonlinenum"),
+            @Result(column = "time", property = "goods.time"),
     })
     public List<ShowingGoods> searchByName(String gname,String state);
 
@@ -153,5 +156,16 @@ public interface GoodsMapper {
     @Insert("insert into goods values(null,#{gsave},#{gsales},#{sid},#{state},#{srcid},#{gname},#{gonlinenum},#{time})")
     @Options(useGeneratedKeys = true, keyProperty = "gid", keyColumn = "gid")
     public void insert(Goods goods);
+
+    @Update("update goods set time=#{time}")
+    public void updateTime(Date time);
+
+    @Update("update goods set time=#{time} where gid=#{gid}")
+    public void updateTimeByGid(Integer gid,Date time);
+
+//    @Update("update goods set where gid=#{gid}")
+//    public void updateGoodsByGid(Goods goods);
+
+
 
 }

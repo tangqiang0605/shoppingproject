@@ -47,6 +47,10 @@ const routes = [
       requireAuth: true,
     },
 
+  },{
+  path:'/uilab',
+    name:'uilab',
+    component: ()=>import('../views/uiLab')
   }
 
 

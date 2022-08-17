@@ -48,4 +48,10 @@ public class GoodsController {
     }
 
 
+    @GetMapping("setgoodstime")
+    public void setGoodsTime(Integer gid,Long time){
+        // finish: 2022/8/17 long为空怎么办
+        goodsService.setGoodsTime(gid,time);
+    }
+
 }

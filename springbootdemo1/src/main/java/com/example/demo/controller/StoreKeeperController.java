@@ -1,13 +1,18 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.*;
+import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.service.GoodsService;
 import com.example.demo.service.StoreKeeperService;
+import com.sun.javaws.IconUtil;
 import org.apache.catalina.Store;
 import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -18,6 +23,8 @@ public class StoreKeeperController {
 
     @Autowired
     private GoodsService goodsService;
+    @Autowired
+    private GoodsMapper goodsMapper;
 
     /**
      * 账号管理：注册
@@ -90,9 +97,24 @@ public class StoreKeeperController {
     }
 
     @GetMapping("getorders")
-    private List<Orders> getOrders(Integer sid) {
+    public List<Orders> getOrders(Integer sid) {
         return storeKeeperService.getOrders(sid);
     }
 
+//    @GetMapping("time")
+//    public void test4time(Date time){
+//
+//        System.out.println(time);
+//        Date time2=new Date();
+//        System.out.println(time2);
+//        goodsMapper.updateTime(time);
+//        System.out.println(time);
+//    }
+
+    @PostMapping("updategoods")
+    public void updateGoods(@RequestBody Goods goods){
+        storeKeeperService.updateGoods(goods);
+//        System.out.println(goods);
+    }
 
 }

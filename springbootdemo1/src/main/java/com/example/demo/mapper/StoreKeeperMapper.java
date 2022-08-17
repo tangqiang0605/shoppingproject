@@ -23,6 +23,7 @@ public interface StoreKeeperMapper {
     @Select("select * from storekeeper")
     public List<StoreKeeper> findAll();
 
+//    public void updateGoods
 
 
 }

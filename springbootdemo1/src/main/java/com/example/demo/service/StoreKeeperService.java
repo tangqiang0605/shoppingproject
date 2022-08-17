@@ -100,4 +100,9 @@ public class StoreKeeperService {
 //        return
 //    }
 
+    public void updateGoods(Goods goods){
+//        goodsMapper.findByGid(gid);
+        goodsMapper.exchange(goods);
+    }
+
 }
