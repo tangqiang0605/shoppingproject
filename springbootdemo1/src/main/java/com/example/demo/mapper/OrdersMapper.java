@@ -11,8 +11,8 @@ import java.util.List;
 @Repository
 public interface OrdersMapper {
 
-    @Select("select * from orders where sid=#{sid}")
-    public List<Orders> findBySid(Integer sid);
+//    @Select("select * from orders where sid=#{sid}")
+//    public List<Orders> findBySid(Integer sid);
 
     @Select("select * from orders where oid=#{oid}")
     public Orders findOrdersByOid(Integer oid);
@@ -37,6 +37,9 @@ public interface OrdersMapper {
 
     @Select("select * from orders where cid=#{cid}")
     public List<Orders> findByCid(Integer cid);
+
+    @Select("select * from orders where sid=#{sid}")
+    public List<Orders> findBySid(Integer sid);
 
     @Insert("insert into orders values (null,#{ostate},null,#{cid},#{sid},#{isdeli})")
     @Options(useGeneratedKeys = true,keyProperty = "oid",keyColumn = "oid")

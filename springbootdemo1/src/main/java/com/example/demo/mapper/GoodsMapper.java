@@ -38,9 +38,9 @@ public interface GoodsMapper {
 
     @Select("select s.sid,s.sname,sum(gsales) totalsales,count(gid) onlinegoodsnum\n" +
             "    from storekeeper as s,goods\n" +
-            "    where s.sid=goods.sid\n" +
+            "    where s.sid=goods.sid and goods.state=#{state}\n" +
             "    group by s.sid;")
-    public List<Shops> findAllShops();
+    public List<Shops> findAllShops(String state);
 
     @Select("select s.sid,s.sname,sum(gsales) totalsales,count(gid) onlinegoodsnum\n" +
             "    from storekeeper as s,goods\n" +

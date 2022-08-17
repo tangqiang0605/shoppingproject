@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.*;
 import com.example.demo.mapper.GoodsMapper;
+import com.example.demo.mapper.OrdersMapper;
 import com.example.demo.mapper.SrcMapper;
 import com.example.demo.mapper.StoreKeeperMapper;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,12 @@ public class StoreKeeperService {
     private GoodsMapper goodsMapper;
     @Autowired
     private StoreKeeperMapper storeKeeperMapper;
+    @Autowired
+    private OrdersMapper ordersMapper;
+
+    public void updateOdersState(Integer oid,String ostate){
+        ordersMapper.updateOstateByOid(oid,ostate);
+    }
 
     /**
      * 店主操作，添加商品到goods表中。
@@ -31,7 +38,9 @@ public class StoreKeeperService {
         return goods.getGid();
     }
 
-
+    public List<Orders> getOrders(Integer sid) {
+        return ordersMapper.findBySid(sid);
+    }
 
     public Integer signUp(StoreKeeper storeKeeper){
         storeKeeperMapper.insert(storeKeeper);

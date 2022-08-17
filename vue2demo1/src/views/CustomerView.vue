@@ -70,7 +70,13 @@
             <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
             <el-descriptions-item label="店铺id">{{ item.orders.sid }}</el-descriptions-item>
             <el-descriptions-item label="状态">
-              <el-tag size="small">{{ item.orders.ostate }}</el-tag>
+<!--              <el-tag size="small">{{ item.orders.ostate }}</el-tag>-->
+              <el-tag size="small" type="info" v-show="item.orders.ostate=='待发货'">待发货</el-tag>
+              <el-tag size="small" type="warning" v-show="item.orders.ostate=='已发货'">已发货</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate=='待取货'">待取货</el-tag>
+              <el-tag size="small" type="" v-show="item.orders.ostate=='配送中'">配送中</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate=='已送达'">已送达</el-tag>
+              <el-tag size="small" type="success" v-show="item.orders.ostate=='已完成'">已完成</el-tag>
             </el-descriptions-item>
           </el-descriptions>
           <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">

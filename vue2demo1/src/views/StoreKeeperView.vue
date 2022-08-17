@@ -262,39 +262,44 @@
     </el-row>
 
 
-
     <el-row v-show="activeIndex==='3'">
-      <el-row v-for="(item,orderIndex) in ordersData" style="margin: 40px">
+      <el-row v-for="(item,orderIndex) in ordersCartsData" style="margin: 40px">
         <el-card shadow="hover">
           <el-descriptions title="订单信息">
             <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
             <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
-            <el-descriptions-item label="店铺id">{{ item.orders.sid }}</el-descriptions-item>
+            <el-descriptions-item label="顾客id">{{ item.orders.cid }}</el-descriptions-item>
             <el-descriptions-item label="状态">
-              <el-tag size="small">{{ item.orders.ostate }}</el-tag>
+              <!--              <el-tag size="small">{{ item.orders.ostate }}</el-tag>-->
+              <el-tag size="small" type="info" v-show="item.orders.ostate=='待发货'">待发货</el-tag>
+              <el-tag size="small" type="warning" v-show="item.orders.ostate=='已发货'">已发货</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate=='待取货'">待取货</el-tag>
+              <el-tag size="small" type="" v-show="item.orders.ostate=='配送中'">配送中</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate=='已送达'">已送达</el-tag>
+              <el-tag size="small" type="success" v-show="item.orders.ostate=='已完成'">已完成</el-tag>
+              <!--              <el-tag type="success">标签二</el-tag>-->
+              <!--              <el-tag type="info">标签三</el-tag>-->
+              <!--              <el-tag type="warning">标签四</el-tag>-->
+              <!--              <el-tag type="danger">标签五</el-tag>-->
             </el-descriptions-item>
           </el-descriptions>
-          <!--          <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">-->
-          <!--            商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}-->
-          <!--          </div>-->
-          <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate=='待发货'"
-                     @click="finishOrders(orderIndex)">
+          <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">
+            商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}
+          </div>
+          <!--          未送达之前是没有完成按钮的，而完成后会显示不可操作的完成按钮-->
+          <el-button type="success" size="small" style="margin-top: 10px"
+                     v-show="item.orders.ostate=='待发货'"
+                     @click="finishOrders(orderIndex,'已发货')">发布为配送任务
           </el-button>
-          <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate=='待发货'"
-                     disabled>完成配送
+          <el-button type="success" size="small" style="margin-top: 10px"
+                     v-show="item.orders.ostate=='待发货'"
+                     @click="finishOrders(orderIndex,'待取货')">等待顾客取货
           </el-button>
-          <!--          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'"-->
-          <!--                     @click="finishOrders(orderIndex)">完成订单-->
-          <!--          </el-button>-->
-          <!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
-          <!--            完成订单-->
-          <!--          </el-button>-->
-          <!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
-          <!--            取消配送-->
-          <!--          </el-button>-->
         </el-card>
       </el-row>
     </el-row>
+
+
   </div>
 </template>
 
@@ -338,27 +343,28 @@ export default {
         isban: false
       },
 
-      goodsImg:{},
+      goodsImg: {},
       goodsData: [],
       ordersData: [],
+      ordersCartsData: [],
 
     }
   },
   methods: {
-    changeGoods(){
+    changeGoods() {
 
     },
 
-    delGoods(showingGoods){
+    delGoods(showingGoods) {
 
       this.$confirm('将从仓库永久移除该商品, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        showingGoods.goods.state='已删除';
+        showingGoods.goods.state = '已删除';
         //   更新远程数据
-        axios.post('http://localhost:8181/storekeeper/updategoodsstate',showingGoods).then(resp=>{
+        axios.post('http://localhost:8181/storekeeper/updategoodsstate', showingGoods).then(resp => {
           axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
             this.goodsData = resp.data;
           })
@@ -373,23 +379,42 @@ export default {
     },
 
 
-
-    toOnline(){
-      this.activeIndex='1';
+    toOnline() {
+      this.activeIndex = '1';
       axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
         this.goodsData = resp.data;
       })
     },
-    toRepository(){
-      this.activeIndex='2';
+    toRepository() {
+      this.activeIndex = '2';
       // alert(this.activeIndex);
       axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
         this.goodsData = resp.data;
       })
     },
-    toOrders(){
-      this.activeIndex='3';
-      alert(this.activeIndex);
+    toOrders() {
+      this.activeIndex = '3';
+      // this.activeIndex = '2';
+      axios.get("http://localhost:8181/storekeeper/getorders?sid=" + this.storeKeeper.sid).then(resp => {
+        this.ordersCartsData.length = 0;
+        for (const index in resp.data) {
+          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+            this.ordersCartsData.push({orders: resp.data[index], carts: resp1.data});
+          })
+        }
+      })
+
+    },
+    finishOrders(orderIndex, state) {
+
+      // 更新远程数据
+      axios.get('http://localhost:8181/storekeeper/updateodersstate?oid=' + this.ordersCartsData[orderIndex].orders.oid + '&ostate=' + state).then(
+          resp => {
+
+            // 更新本地数据
+            this.ordersCartsData[orderIndex].orders.ostate = state;
+          }
+      )
 
     },
     changeState(goods, state) {
@@ -397,13 +422,12 @@ export default {
       goods.goods.state = state;
       // console.log(goods.goods);
       axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
-        if(this.activeIndex=='1')
-        {
+        if (this.activeIndex == '1') {
           axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
             // 修改本地数据
             this.goodsData = resp.data;
           })
-        }else if(this.activeIndex=='2'){
+        } else if (this.activeIndex == '2') {
           axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
             this.goodsData = resp.data;
           })
@@ -498,8 +522,8 @@ export default {
 
 
       try {
-        this.goods.srcid=this.$refs.pictureUpload.$children[1]._props.fileList[0].response;
-      }catch(err) {
+        this.goods.srcid = this.$refs.pictureUpload.$children[1]._props.fileList[0].response;
+      } catch (err) {
         this.goods.srcid = 0;
       }
 
@@ -523,7 +547,7 @@ export default {
             // 从store读取的值
             // todo需要重新重store读取并赋值
             // this.goods.sid = 100;
-            this.goods.sid=this.storeKeeper.sid;
+            this.goods.sid = this.storeKeeper.sid;
             // this.goods.srcid = 100;
             // 从表单读取的值
             this.goods.gsave = n;
@@ -534,7 +558,7 @@ export default {
                   if (resp.data != 0) {
                     this.goods = {};
                     // this.inf=this.goods;
-                    if(this.activeIndex=='2'){
+                    if (this.activeIndex == '2') {
                       axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
                         this.goodsData = resp.data;
                       })
@@ -569,7 +593,7 @@ export default {
         // this.testInf=resp.data;
       })
 
-    }else if(this.activeIndex=='2'){
+    } else if (this.activeIndex == '2') {
       axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
         this.goodsData = resp.data;
       })

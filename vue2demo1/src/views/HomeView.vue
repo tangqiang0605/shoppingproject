@@ -353,8 +353,8 @@ export default {
           this.customer.cid = n;
           axios.post('http://localhost:8181/customer/login', this.customer).then(resp => {
             if ("登录验证成功" === resp.data) {
-              axios.post('http://localhost:8181/customer/getinf', this.customer).then(resp => {
-                this.customer = resp.data;
+              axios.post('http://localhost:8181/customer/getinf', this.customer).then(resp1 => {
+                this.customer = resp1.data;
                 this.testInf = this.customer;
                 this.customerLoginVisible = false;
                 this.isLogin = true;
@@ -395,8 +395,8 @@ export default {
               this.customerSignupVisible = false;
             }
           });
-          // todo：就算下面这条注释去掉设置密码为空，它还是能有正确的密码和昵称，不知道为什么。难道newCustomer和customer的数据是双向绑定的吗？
-          // this.customer.cpassword='';
+          // finish：就算下面这条注释去掉设置密码为空，它还是能有正确的密码和昵称，不知道为什么。难道newCustomer和customer的数据是双向绑定的吗？没有又突然好了。
+          this.customer.cpassword='';
           this.customer.cid = resp.data;
           this.testInf = this.customer;
           this.customerLoginVisible = true;
@@ -426,13 +426,14 @@ export default {
           this.storeKeeper.sid = n;
           axios.post('http://localhost:8181/storekeeper/login', this.storeKeeper).then(resp => {
             if ("登录验证成功" === resp.data) {
-              axios.post('http://localhost:8181/storekeeper/getinf', this.storeKeeper).then(resp => {
+              axios.post('http://localhost:8181/storekeeper/getinf', this.storeKeeper).then(resp1 => {
                 // this.customer = resp.data;
                 // this.testInf = this.customer;
                 this.storeKeeperLoginVisible = false;
                 // this.isLogin = true;
                 // this.$store.commit('saveCustomer', this.customer);
-                this.$store.commit('saveStoreKeeper', resp.data);
+                // console.log(resp1.data)
+                this.$store.commit('saveStoreKeeper', resp1.data);
                 // 储存并跳转网页
                 this.$router.push('storekeeper');
               })
@@ -504,6 +505,7 @@ export default {
                 // this.testInf = this.;
                 this.deliveryLoginVisible = false;
                 // this.isLogin = true;
+                this.delivery=resp.data;
                 this.$store.commit('saveDelivery', this.delivery);
                 this.$router.push('/delivery');
               })

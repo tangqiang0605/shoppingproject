@@ -38,7 +38,8 @@ public class GoodsService {
      * @return
      */
     public List<Shops> allShops() {
-        return goodsMapper.findAllShops();
+        // TODO: 2022/8/17 销量是在售商品的总销量。
+        return goodsMapper.findAllShops("已上架");
     }
 
     /**
