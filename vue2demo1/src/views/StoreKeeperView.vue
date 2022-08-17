@@ -131,12 +131,26 @@
       </el-table-column>
     </el-table>
 
+<!--    <el-row>-->
+
+<!--    </el-row>-->
+
     <el-row v-show="activeIndex==='1'">
+      <el-row style="margin-top: 10px;margin-bottom: 10px;margin-left: 30px">
+
+      <el-button type="danger" @click="changeBathState('仓库中')">批量下架</el-button>
+      <el-button type="primary" @click="search">模糊搜索</el-button>
+        <el-input v-model="searchContext" placeholder="请输入内容" style="margin-left:10px;width: 600px"></el-input>
+      </el-row>
       <el-table
           v-show="isLogin"
           :data="goodsData"
           border
-          style="margin: 30px">
+          style="margin-left: 30px;margin-right: 30px">
+        <el-table-column
+            type="selection"
+            width="55">
+        </el-table-column>
         <!--      fixed prop label width-->
         <el-table-column
             prop="srcurl"
@@ -197,11 +211,22 @@
 
 
     <el-row v-show="activeIndex==='2'">
+      <el-row style="margin-top: 10px;margin-bottom: 10px;margin-left: 30px">
+
+        <el-button type="danger" @click="changeBathState('已删除')">批量删除</el-button>
+        <el-button type="success" @click="changeBathState('已上架')">批量上架</el-button>
+        <el-button type="primary" @click="search">模糊搜索</el-button>
+        <el-input v-model="searchContext" placeholder="请输入内容" style="margin-left:10px;width: 600px"></el-input>
+      </el-row>
       <el-table
           v-show="isLogin"
           :data="goodsData"
           border
-          style="margin: 30px">
+          style="margin-left: 30px;margin-right: 30px">
+        <el-table-column
+            type="selection"
+            width="55">
+        </el-table-column>
         <!--      fixed prop label width-->
         <el-table-column
             prop="srcurl"
@@ -311,6 +336,8 @@ export default {
   // components: {AddGoods},
   data() {
     return {
+      searchContext:'',
+
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
@@ -348,11 +375,29 @@ export default {
       ordersData: [],
       ordersCartsData: [],
 
+
     }
   },
   methods: {
     changeGoods() {
 
+    },
+
+    changeBathState(state){
+
+    },
+
+    search(){
+      var state='';
+      if(this.activeIndex==='1'){
+        state='已上架';
+
+      }else if(this.activeIndex==='2'){
+        state='仓库中';
+      }
+      axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + this.searchContext+'&state='+state+'&sid='+this.storeKeeper.sid).then(resp => {
+        this.goodsData = resp.data;
+      })
     },
 
     delGoods(showingGoods) {

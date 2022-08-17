@@ -82,7 +82,7 @@ public class GoodsService {
 
 
     public List<ShowingGoods> searchGoods(String gname) {
-        return goodsMapper.searchByName(gname);
+        return goodsMapper.searchByName(gname,"已上架");
     }
 
 }

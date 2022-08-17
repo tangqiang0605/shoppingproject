@@ -78,6 +78,11 @@ public class StoreKeeperController {
         goodsService.exchange(goods.getGid(),goods.getState());
     }
 
+    @GetMapping("searchgoods")
+    public List<ShowingGoods> searchGoodsByGname(String gname,String state,Integer sid){
+        return storeKeeperService.searchGoodsByGnamePlus(gname, state,sid);
+    };
+
     @GetMapping("updateodersstate")
     public void updateOrdersState(Integer oid,String ostate)
     {

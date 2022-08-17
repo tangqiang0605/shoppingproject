@@ -661,25 +661,7 @@ export default {
     },
     // 搜索功能:当搜索为空时搜索全部
     searchData() {
-      // if (this.search==='') {
-      //   if (this.activeIndex == '1') {
-      //     // this.searchHint = '搜索全部商品';
-      //     // 从服务器获取商品信息
-      //     axios.get("http://localhost:8181/goods/show").then(resp => {
-      //       this.goodsData = resp.data;
-      //     })
-      //
-      //   } else if (this.activeIndex == '2') {
-      //     // this.searchHint = '搜索全部店铺';
-      //     // 从服务器获取店铺信息
-      //     axios.get('http://localhost:8181/goods/shops').then(resp => {
-      //       this.shopsData = resp.data;
-      //     })
-      //   } else {
-      //     // this.searchHint = "搜索什么";
-      //   }
-      //
-      // } else
+
       if (this.activeIndex == '1') {
         // alert('搜索商品');
         axios.get('http://localhost:8181/goods/searchgoods?gname=' + this.search).then(resp => {
@@ -698,6 +680,7 @@ export default {
   ,
 
   created() {
+
     // 测试shop界面用
     // this.activeIndex = '2';
     // var cid = this.$store.state.customer.cid

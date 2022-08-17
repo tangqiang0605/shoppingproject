@@ -85,6 +85,10 @@ public class StoreKeeperService {
         return goodsMapper.findBySid(sid,"仓库中");
     }
 
+    public List<ShowingGoods> searchGoodsByGnamePlus(String gname,String state,Integer sid) {
+        return goodsMapper.searchByNamePlus(gname, state,sid);
+    }
+
 
 //    public void delGoods(Integer gid){
 //

@@ -113,7 +113,7 @@ public interface GoodsMapper {
 //    @Select("select * from t_user where gname like concat('%',#{gname},'%')")
     @Select("select * from storekeeper,goods,src \n" +
             "where goods.srcid=src.srcid \n" +
-            "  and state=\"已上架\" \n" +
+            "  and state=#{state} \n" +
             "  and storekeeper.sid=goods.sid\n" +
             "  and goods.gname like concat('%',#{gname},'%')")
     @Results({
@@ -125,7 +125,30 @@ public interface GoodsMapper {
             @Result(column = "gname", property = "goods.gname"),
             @Result(column = "gonlinenum", property = "goods.gonlinenum"),
     })
-    public List<ShowingGoods> searchByName(String gname);
+    public List<ShowingGoods> searchByName(String gname,String state);
+
+    @Select("select * from storekeeper,goods,src \n" +
+            "where goods.srcid=src.srcid \n" +
+            "  and state=#{state} \n" +
+            "  and storekeeper.sid=goods.sid\n" +
+            "  and storekeeper.sid=#{sid}\n" +
+            "  and goods.gname like concat('%',#{gname},'%')")
+    @Results({
+            @Result(column = "srcurl", property = "srcurl"),
+            @Result(column = "sname", property = "sname"),
+            @Result(column = "gid", property = "goods.gid"),
+            @Result(column = "gsave",property = "goods.gsave"),
+//            @Result(column = "",property = "goods.sid"),
+            @Result(column = "gsales", property = "goods.gsales"),
+            @Result(column = "sid", property = "goods.sid"),
+            @Result(column = "gname", property = "goods.gname"),
+            @Result(column = "gonlinenum", property = "goods.gonlinenum"),
+            @Result(column = "time", property = "goods.time"),
+    })
+    public List<ShowingGoods> searchByNamePlus(String gname,String state,Integer sid);
+
+
+
 
     @Insert("insert into goods values(null,#{gsave},#{gsales},#{sid},#{state},#{srcid},#{gname},#{gonlinenum},#{time})")
     @Options(useGeneratedKeys = true, keyProperty = "gid", keyColumn = "gid")
