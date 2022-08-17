@@ -43,6 +43,7 @@ public class GoodsService {
 
     /**
      * 搜索店铺
+     *
      * @param sname
      * @return
      */
@@ -50,13 +51,32 @@ public class GoodsService {
         return goodsMapper.searchShops(sname);
     }
 
+    /**
+     * 交换online和save的数量
+     *
+     * @param gid
+     */
+//    public void updateState(Integer gid,String state){
+//        goodsMapper.updateState(gid,state);
+//    }
+    public void exchange(Integer gid, String state) {
+        Goods byGid = goodsMapper.findByGid(gid);
+        Integer temp = byGid.getGsave();
+        byGid.setGsave(byGid.getGonlinenum());
+        byGid.setGonlinenum(temp);
+        byGid.setState(state);
+        goodsMapper.exchange(byGid);
+    }
+//    public void exchange(Integer gid){
+//        Goods byGid = goodsMapper.findByGid(gid);
+//        Integer temp=byGid.getGsave();
+//        byGid.setGsave(byGid.getGonlinenum());
+//        byGid.setGonlinenum(temp);
+//        goodsMapper.exchange(byGid);
+//    }
 
     public List<ShowingGoods> showShop(Integer sid) {
-        return goodsMapper.findBySid(sid,"已上架");
-    }
-
-    public void updateState(Integer gid,String state){
-        goodsMapper.updateState(gid,state);
+        return goodsMapper.findBySid(sid, "已上架");
     }
 
 

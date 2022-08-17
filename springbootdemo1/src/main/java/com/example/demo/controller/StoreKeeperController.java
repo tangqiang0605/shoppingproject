@@ -73,7 +73,9 @@ public class StoreKeeperController {
     @PostMapping("updategoodsstate")
     public void updateGoodsState(@RequestBody ShowingGoods showingGoods){
         Goods goods = showingGoods.getGoods();
-        goodsService.updateState(goods.getGid(),goods.getState());
+//        System.out.println(goods);
+
+        goodsService.exchange(goods.getGid(),goods.getState());
     }
 
 

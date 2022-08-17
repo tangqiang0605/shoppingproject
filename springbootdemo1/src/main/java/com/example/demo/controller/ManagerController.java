@@ -11,8 +11,8 @@ import java.util.List;
 @RestController
 public class ManagerController {
 //    todo：注释
-//    todo：配送员
-//    todo：管理员
+//    finish：配送员
+//    finish：管理员
     // TODO: 2022/8/16 空页提示
     @Autowired
     private ManagerService managerService;

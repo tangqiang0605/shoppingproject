@@ -18,11 +18,13 @@ public interface GoodsMapper {
 //     */
 //    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},#{gname},#{gonlinenum},#{time})")
 //    public void insert(Goods goods);
+    @Delete("delete from goods where gid=#{gid}")
+    public void delByGid(Integer gid);
 
     @Update("update goods set state=#{state} where gid=#{gid}")
     public void updateState(Integer gid,String state);
 
-    @Update("update goods set gsales=#{gsales},state=#{state},gonlinenum=#{gonlinenum} where gid=#{gid}")
+    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},gonlinenum=#{gonlinenum} where gid=#{gid}")
     public void exchange(Goods goods);
 
     @Select("select * from goods where gid=#{gid}")

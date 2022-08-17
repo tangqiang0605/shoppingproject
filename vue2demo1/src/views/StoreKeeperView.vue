@@ -250,15 +250,19 @@
         </el-table-column>
         <el-table-column
             label="操作"
-            width="100">
+            width="240">
           <template slot-scope="scope">
-            <el-button @click="changeState(scope.row,'已上架')" type="success" size="small" v-if="!scope.row.isban">上架
-            </el-button>
+            <el-button @click="changeState(scope.row,'已上架')" type="success" size="small">上架</el-button>
+            <el-button @click="changeGoods" type="primary" size="small">修改</el-button>
+            <el-button @click="delGoods(scope.row)" type="danger" size="small">删除</el-button>
             <!--            <el-button @click="changeState(scope.row,false)" type="text" size="small" v-if="scope.row.isban">解除封禁</el-button>-->
           </template>
         </el-table-column>
       </el-table>
     </el-row>
+
+
+
     <el-row v-show="activeIndex==='3'">
       <el-row v-for="(item,orderIndex) in ordersData" style="margin: 40px">
         <el-card shadow="hover">
@@ -334,13 +338,42 @@ export default {
         isban: false
       },
 
-
+      goodsImg:{},
       goodsData: [],
       ordersData: [],
 
     }
   },
   methods: {
+    changeGoods(){
+
+    },
+
+    delGoods(showingGoods){
+
+      this.$confirm('将从仓库永久移除该商品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        showingGoods.goods.state='已删除';
+        //   更新远程数据
+        axios.post('http://localhost:8181/storekeeper/updategoodsstate',showingGoods).then(resp=>{
+          axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
+            this.goodsData = resp.data;
+          })
+        })
+        //   更新本地数据
+        // if (this.shopCartsData[shopIndex].carts.length == 1) {
+        //   this.shopCartsData.splice(shopIndex, 1);
+        // } else {
+        //   this.shopCartsData[shopIndex].carts.splice(cartIndex, 1);
+        // }
+      }).catch();
+    },
+
+
+
     toOnline(){
       this.activeIndex='1';
       axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
@@ -384,12 +417,12 @@ export default {
       // this.testInf = "changName";
       if (this.newName === '') {
 
-      } else if (this.newName === this.customer.cname) {
+      } else if (this.newName === this.storeKeeper.sname) {
         this.$message.error("用户昵称重复");
       } else {
-        var newCustomer = this.customer;
-        newCustomer.cname = this.newName;
-        axios.post('http://localhost:8181/customer/change', newCustomer)
+        var newCustomer = this.storeKeeper;
+        newCustomer.sname = this.newName;
+        axios.post('http://localhost:8181/storekeeper/change', newCustomer)
             .then(resp => {
               this.$message({
                 message: '修改成功',
@@ -446,7 +479,7 @@ export default {
 
     // 文件处理
     handleRemove(file) {
-      this.$refs.pictureUpload.handleRemove(file)
+      this.$refs.pictureUpload.handleRemove(file);
       this.goods.srcid = 0;
     },
     handlePictureCardPreview(file) {
@@ -456,8 +489,20 @@ export default {
     handleExceed() {
       this.$message.error("只能上传一张封面");
     },
+    // handleSuccess(response, file, fileList){
+    //   this.goodsImg=file;
+    //   alert(this.goodsImg.url);
+    // },
 
     submitForm() {
+
+
+      try {
+        this.goods.srcid=this.$refs.pictureUpload.$children[1]._props.fileList[0].response;
+      }catch(err) {
+        this.goods.srcid = 0;
+      }
+
       if (this.goods.gname == "") {
         this.$message.error("商品名不能为空");
       } else if (this.goods.gsave == "") {
@@ -477,7 +522,8 @@ export default {
 
             // 从store读取的值
             // todo需要重新重store读取并赋值
-            this.goods.sid = 100;
+            // this.goods.sid = 100;
+            this.goods.sid=this.storeKeeper.sid;
             // this.goods.srcid = 100;
             // 从表单读取的值
             this.goods.gsave = n;
@@ -488,10 +534,16 @@ export default {
                   if (resp.data != 0) {
                     this.goods = {};
                     // this.inf=this.goods;
+                    if(this.activeIndex=='2'){
+                      axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
+                        this.goodsData = resp.data;
+                      })
+                    }
                     this.$message({
                       message: '添加成功，返回商品id' + resp.data,
                       type: 'success'
                     });
+
                   } else {
                     this.$message.error("storekeeper接口报错，添加进数据库时数据不匹配出现问题返回id0");
                   }
@@ -517,6 +569,10 @@ export default {
         // this.testInf=resp.data;
       })
 
+    }else if(this.activeIndex=='2'){
+      axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
+        this.goodsData = resp.data;
+      })
     }
   }
 

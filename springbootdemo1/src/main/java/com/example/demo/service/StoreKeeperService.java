@@ -31,6 +31,8 @@ public class StoreKeeperService {
         return goods.getGid();
     }
 
+
+
     public Integer signUp(StoreKeeper storeKeeper){
         storeKeeperMapper.insert(storeKeeper);
         return storeKeeper.getSid();
@@ -73,6 +75,11 @@ public class StoreKeeperService {
     public List<ShowingGoods> findRepository(Integer sid){
         return goodsMapper.findBySid(sid,"仓库中");
     }
+
+
+//    public void delGoods(Integer gid){
+//
+//    }
 
 //    public List<Goods> find()
 

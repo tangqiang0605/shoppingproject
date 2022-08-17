@@ -50,6 +50,7 @@ public class CustomerService {
         return result;
     }
 
+
     public String pay(Integer cid, Integer sid, String receiveWay) {
 //        确定购物车中是否有该店铺的商品
 //        List<ShowingGoods> showingGoods=new LinkedList<>();
