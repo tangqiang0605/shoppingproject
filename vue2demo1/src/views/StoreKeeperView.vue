@@ -388,14 +388,14 @@ export default {
     },
 
 
-    handleSelectionChange1(val) {
-      // this.multipleSelection = val;
-      console.log(val);
-
-    },
+    // handleSelectionChange1(val) {
+    //   // this.multipleSelection = val;
+    //   console.log(val);
+    //
+    // },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(val);
+      // console.log(val);
 
     },
 
