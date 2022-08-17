@@ -38,6 +38,16 @@ router.beforeEach((to, from, next) => {
         next('/');
       }
     }
+
+    if(to.path.indexOf('/delivery')==0){
+      if (store.state.delivery.did){
+        next();
+      }else{
+        alert("请登录账号");
+        next('/');
+      }
+    }
+
     // console.log(to.path.match(new RegExp("^/storekeeper")));
     // console.log(to.path=='/storekeeper');
     // console.log(this.$route.query);

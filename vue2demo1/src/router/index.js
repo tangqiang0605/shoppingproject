@@ -20,7 +20,7 @@ const routes = [
     name:'customer',
     component: ()=>import('../views/CustomerView'),
     meta: {
-      requireAuth: false,
+      requireAuth: true,
     }
   },
   {
@@ -28,7 +28,7 @@ const routes = [
     name:'delivery',
     component: ()=>import('../views/DeliveryView'),
     meta: {
-      requireAuth: false,
+      requireAuth: true,
     }
   },
   {
@@ -44,7 +44,7 @@ const routes = [
     name: 'storekeeper',
     component: () => import('../views/StoreKeeperView'),
     meta: {
-      requireAuth: false,
+      requireAuth: true,
     },
 
   }

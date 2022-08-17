@@ -254,28 +254,32 @@ export default {
 
     this.activeIndex = this.$route.query.activeIndex;
     this.customer = this.$store.state.customer;
-    if (this.activeIndex === '1') {
-      // 从服务器获取商品信息
-      axios.get("http://localhost:8181/customer/findshops?cid=" + this.customer.cid).then(resp => {
-        this.shopCartsData.length = 0;
-        for (const index in resp.data) {
-          axios.get('http://localhost:8181/customer/findcarts?cid=' + this.customer.cid + '&sid=' + resp.data[index].sid).then(resp1 => {
-            this.shopCartsData.push({shop: resp.data[index], carts: resp1.data});
-          })
-        }
-      })
-    } else if (this.activeIndex === '2') {
-      axios.get("http://localhost:8181/customer/getorders?cid=" + this.customer.cid).then(resp => {
-        this.ordersCartsData.length = 0;
-        for (const index in resp.data) {
-          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-            this.ordersCartsData.push({orders: resp.data[index], carts: resp1.data});
-          })
-        }
-      })
-    } else {
 
-    }
+      if (this.activeIndex === '1') {
+        // 从服务器获取商品信息
+        axios.get("http://localhost:8181/customer/findshops?cid=" + this.customer.cid).then(resp => {
+          this.shopCartsData.length = 0;
+          for (const index in resp.data) {
+            axios.get('http://localhost:8181/customer/findcarts?cid=' + this.customer.cid + '&sid=' + resp.data[index].sid).then(resp1 => {
+              this.shopCartsData.push({shop: resp.data[index], carts: resp1.data});
+            })
+          }
+        })
+      } else if (this.activeIndex === '2') {
+        axios.get("http://localhost:8181/customer/getorders?cid=" + this.customer.cid).then(resp => {
+          this.ordersCartsData.length = 0;
+          for (const index in resp.data) {
+            axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+              this.ordersCartsData.push({orders: resp.data[index], carts: resp1.data});
+            })
+          }
+        })
+      } else {
+
+      }
+
+
+
 
   },
 
