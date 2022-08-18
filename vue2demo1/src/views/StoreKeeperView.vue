@@ -146,60 +146,6 @@
       </div>
     </el-dialog>
 
-
-    <!--不展示的表格-->
-    <el-table
-        v-show="false"
-        :data="goodsData"
-        border
-        style="width: 100%">
-      <!--      fixed prop label width-->
-      <el-table-column
-          label="商品"
-          width="120">
-        <template slot-scope="scope">
-          <el-image
-              fit="contain"
-              style="width: 100px; height: 100px"
-              :src="scope.row.srcurl"
-              :preview-src-list="[scope.row.srcurl]"></el-image>
-        </template>
-      </el-table-column>
-      <el-table-column
-          prop="goods.gname"
-          label="名称"
-          width="120">
-      </el-table-column>
-      <el-table-column
-          prop="sname"
-          label="商家"
-          width="120">
-      </el-table-column>
-      <el-table-column
-          prop="goods.gsales"
-          label="销售量"
-          width="120">
-      </el-table-column>
-      <el-table-column
-          prop="goods.gonlinenum"
-          label="剩余"
-          width="120">
-      </el-table-column>
-
-      <el-table-column
-          fixed="right"
-          label="操作"
-          width="100">
-        <template slot-scope="scope">
-          <el-button @click="addToCart(scope.row)" type="text" size="small">加入购物车</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!--    <el-row>-->
-
-    <!--    </el-row>-->
-
     <el-row v-show="activeIndex==='1'">
       <el-row style="margin-top: 10px;margin-bottom: 10px;margin-left: 30px">
 
@@ -368,10 +314,6 @@
               <el-tag size="small" type="" v-show="item.orders.ostate=='配送中'">配送中</el-tag>
               <el-tag size="small" type="danger" v-show="item.orders.ostate=='已送达'">已送达</el-tag>
               <el-tag size="small" type="success" v-show="item.orders.ostate=='已完成'">已完成</el-tag>
-              <!--              <el-tag type="success">标签二</el-tag>-->
-              <!--              <el-tag type="info">标签三</el-tag>-->
-              <!--              <el-tag type="warning">标签四</el-tag>-->
-              <!--              <el-tag type="danger">标签五</el-tag>-->
             </el-descriptions-item>
           </el-descriptions>
           <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">
@@ -379,11 +321,11 @@
           </div>
           <!--          未送达之前是没有完成按钮的，而完成后会显示不可操作的完成按钮-->
           <el-button type="success" size="small" style="margin-top: 10px"
-                     v-show="item.orders.ostate=='待发货'"
+                     v-show="item.orders.ostate==='待发货'&&(!item.orders.isdeli)"
                      @click="finishOrders(orderIndex,'已发货')">发布为配送任务
           </el-button>
           <el-button type="success" size="small" style="margin-top: 10px"
-                     v-show="item.orders.ostate=='待发货'"
+                     v-show="item.orders.ostate==='待发货'&&item.orders.isdeli"
                      @click="finishOrders(orderIndex,'待取货')">等待顾客取货
           </el-button>
         </el-card>
