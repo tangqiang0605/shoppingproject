@@ -46,7 +46,6 @@ public class DeliveryService {
         return delivery.getDid();
     }
 
-    // TODO: 2022/8/16 待发货（用户），isdeli已发货（待取货）（商家），配送中（接单），已送达（配送），已完成（用户）
     public List<Orders> getNewOrders() {
         return ordersMapper.findByState("已发货");
     }

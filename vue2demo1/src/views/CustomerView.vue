@@ -134,7 +134,6 @@ export default {
     changeAmount(shopIndex, cartIndex, isPlus) {
       var isDel = false;
       if (isPlus) {
-        // this.cartsData[shopIndex][cartIndex].oamount += 1;
         this.shopCartsData[shopIndex].carts[cartIndex].oamount++;
       } else if (this.shopCartsData[shopIndex].carts[cartIndex].oamount != 1) {
         this.shopCartsData[shopIndex].carts[cartIndex].oamount--;
