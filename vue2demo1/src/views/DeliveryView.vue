@@ -1,7 +1,5 @@
 <template>
   <div>
-<!--    {{ delivery }}-->
-<!--    {{ testInf }}-->
     <el-row>
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
@@ -20,21 +18,16 @@
         </el-menu>
       </el-col>
     </el-row>
-
     <el-row v-show="activeIndex==='1'">
       <el-row v-for="(item,orderIndex) in ordersCartsData1" style="margin: 40px">
         <el-card shadow="hover">
           <el-descriptions title="订单信息">
             <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
-            <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
             <el-descriptions-item label="店铺id">{{ item.orders.sid }}</el-descriptions-item>
             <el-descriptions-item label="状态">
               <el-tag size="small">{{ item.orders.ostate }}</el-tag>
             </el-descriptions-item>
           </el-descriptions>
-          <!--          <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">-->
-          <!--            商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}-->
-          <!--          </div>-->
           <el-button type="primary" size="small" style="margin-top: 10px" @click="takeOrders(orderIndex)">接受订单
           </el-button>
         </el-card>
@@ -46,40 +39,23 @@
         <el-card shadow="hover">
           <el-descriptions title="订单信息">
             <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
-            <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
             <el-descriptions-item label="店铺id">{{ item.orders.sid }}</el-descriptions-item>
             <el-descriptions-item label="状态">
-<!--              <el-tag size="small">{{ item.orders.ostate }}</el-tag>-->
-<!--              <el-tag size="small" type="info" v-show="item.orders.ostate=='待发货'">待发货</el-tag>-->
               <el-tag size="small" type="warning" v-show="item.orders.ostate=='已发货'">已发货</el-tag>
-<!--              <el-tag size="small" type="danger" v-show="item.orders.ostate=='待取货'">待取货</el-tag>-->
               <el-tag size="small" type="" v-show="item.orders.ostate=='配送中'">配送中</el-tag>
               <el-tag size="small" type="danger" v-show="item.orders.ostate=='已送达'">已送达</el-tag>
               <el-tag size="small" type="success" v-show="item.orders.ostate=='已完成'">已完成</el-tag>
             </el-descriptions-item>
           </el-descriptions>
-          <!--          <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">-->
-          <!--            商品{{ index + 1 }}:{{ cart.gname }}&emsp;数量：{{ cart.oamount }}-->
-          <!--          </div>-->
           <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate=='配送中'"
                      @click="finishOrders(orderIndex)">完成配送
           </el-button>
           <el-button type="primary" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='配送中'"
                      disabled>完成配送
           </el-button>
-<!--          <el-button type="success" size="small" style="margin-top: 10px" v-show="item.orders.ostate!='已完成'"-->
-<!--                     @click="finishOrders(orderIndex)">完成订单-->
-<!--          </el-button>-->
-<!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
-<!--            完成订单-->
-<!--          </el-button>-->
-<!--          <el-button type="success" size="small" style="margin-top: 10px" disabled v-show="item.orders.ostate=='已完成'">-->
-<!--            取消配送-->
-<!--          </el-button>-->
         </el-card>
       </el-row>
     </el-row>
-    <!--    <button @click="testPost"></button>-->
   </div>
 </template>
 

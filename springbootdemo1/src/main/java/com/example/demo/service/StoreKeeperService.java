@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.domain.*;
 import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.mapper.OrdersMapper;
-import com.example.demo.mapper.SrcMapper;
 import com.example.demo.mapper.StoreKeeperMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,32 +13,11 @@ import java.util.List;
 public class StoreKeeperService {
 
     @Autowired
-    private SrcMapper srcMapper;
-    @Autowired
     private GoodsMapper goodsMapper;
     @Autowired
     private StoreKeeperMapper storeKeeperMapper;
     @Autowired
     private OrdersMapper ordersMapper;
-
-    public void updateOdersState(Integer oid,String ostate){
-        ordersMapper.updateOstateByOid(oid,ostate);
-    }
-
-    /**
-     * 店主操作，添加商品到goods表中。
-     *
-     * @param goods
-     * @return
-     */
-    public int add(Goods goods) {
-        goodsMapper.insert(goods);
-        return goods.getGid();
-    }
-
-    public List<Orders> getOrders(Integer sid) {
-        return ordersMapper.findBySid(sid);
-    }
 
     public Integer signUp(StoreKeeper storeKeeper){
         storeKeeperMapper.insert(storeKeeper);
@@ -71,37 +49,25 @@ public class StoreKeeperService {
         return storeKeeper.getSid();
     }
 
+    public List<ShowingGoods> findGoods(String gname, String state, Integer sid) {
+        return goodsMapper.selectByNamePlus(gname, state,sid);
+    }
+
     public int addGoods(Goods goods){
         goodsMapper.insert(goods);
         return goods.getGid();
     }
 
-//    public List<ShowingGoods> findGoodsBySid(Integer sid){
-//        return goodsMapper.findBySid(sid,"已上架");
-//    }
-//
-//    public List<ShowingGoods> findRepository(Integer sid){
-//        return goodsMapper.findBySid(sid,"仓库中");
-//    }
-
-    public List<ShowingGoods> searchGoodsByGnamePlus(String gname,String state,Integer sid) {
-        return goodsMapper.selectByNamePlus(gname, state,sid);
+    public void updateGoods(Goods goods){
+        goodsMapper.update(goods);
     }
 
+    public List<Orders> getOrders(Integer sid) {
+        return ordersMapper.findBySid(sid);
+    }
 
-//    public void delGoods(Integer gid){
-//
-//    }
-
-//    public List<Goods> find()
-
-//    public List<Src> findAllSrc(){
-//        return
-//    }
-
-    public void updateGoods(Goods goods){
-//        goodsMapper.findByGid(gid);
-        goodsMapper.update(goods);
+    public void updateOdersState(Integer oid,String ostate){
+        ordersMapper.updateOstateByOid(oid,ostate);
     }
 
 }

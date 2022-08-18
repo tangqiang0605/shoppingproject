@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ testInf }}
+    <!--    导航栏-->
     <el-row>
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
@@ -85,7 +85,6 @@
     <el-dialog :visible.sync="dialogVisible">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
-
     <!--    修改商品-->
     <el-dialog :title="title" :visible.sync="changeFormVisible">
       <el-form :model="chosedGoods">
@@ -135,10 +134,6 @@
           </el-upload>
 
         </el-form-item>
-        <!--        <el-form-item label="" :label-width="formLabelWidth">-->
-        <!--          <el-input v-model="goods.gsave" autocomplete="off"></el-input>-->
-        <!--        </el-form-item>-->
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="changeFormVisible = false">取 消</el-button>
@@ -146,6 +141,7 @@
       </div>
     </el-dialog>
 
+    <!--    已上架页面-->
     <el-row v-show="activeIndex==='1'">
       <el-row style="margin-top: 10px;margin-bottom: 10px;margin-left: 30px">
 
@@ -222,11 +218,9 @@
         </el-table-column>
       </el-table>
     </el-row>
-
-
+    <!--    仓库中页面-->
     <el-row v-show="activeIndex==='2'">
       <el-row style="margin-top: 10px;margin-bottom: 10px;margin-left: 30px">
-
         <el-button type="danger" @click="changeBathState('已删除')">批量删除</el-button>
         <el-button type="success" @click="changeBathState('已上架')">批量上架</el-button>
         <el-button type="primary" @click="search">模糊搜索</el-button>
@@ -242,7 +236,6 @@
             type="selection"
             width="55">
         </el-table-column>
-        <!--      fixed prop label width-->
         <el-table-column
             prop="srcurl"
             label="商品图"
@@ -292,13 +285,11 @@
             <el-button @click="changeState(scope.row,'已上架')" type="success" size="small">上架</el-button>
             <el-button type="primary" size="small" @click="changeGoods(scope.row)">修改</el-button>
             <el-button @click="delGoods(scope.row)" type="danger" size="small">删除</el-button>
-            <!--            <el-button @click="changeState(scope.row,false)" type="text" size="small" v-if="scope.row.isban">解除封禁</el-button>-->
           </template>
         </el-table-column>
       </el-table>
     </el-row>
-
-
+    <!--    订单管理页面-->
     <el-row v-show="activeIndex==='3'">
       <el-row v-for="(item,orderIndex) in ordersCartsData" style="margin: 40px">
         <el-card shadow="hover">
@@ -330,7 +321,6 @@
       </el-row>
     </el-row>
 
-
   </div>
 </template>
 
@@ -339,20 +329,24 @@ import axios from "axios";
 
 export default {
   name: "StoreKeeperView",
-  // components: {AddGoods},
   data() {
     return {
+      // 预定义变量
+      formLabelWidth: '120px',
+      title: '添加商品',
+      activeIndex: '1',
       uploadTime: 0,
       searchContext: '',
-      chosedGoods: {},
+      isLogin: false,
 
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
-      isLogin: false,
 
       changeFormVisible: false,
       dialogFormVisible: false,
+      // 数据实体
+      chosedGoods: {},
       goods: {
         gid: 0,
         gsave: '',
@@ -364,13 +358,6 @@ export default {
         gonlinenum: 0,
         time: null
       },
-      formLabelWidth: '120px',
-      title: '添加商品',
-
-      testInf: '',
-
-      activeIndex: '1',
-
       storeKeeper: {
         sid: '',
         sname: '',
@@ -378,95 +365,13 @@ export default {
         isban: false
       },
 
-      goodsImg: {},
       goodsData: [],
-      ordersData: [],
       ordersCartsData: [],
-
-      // bathSelect1:[],
-
       multipleSelection: [],
     }
   },
   methods: {
-    changeGoods(showinggoods) {
-      this.chosedGoods = showinggoods.goods;
-      this.uploadTime = 0;
-      this.srcid = 0;
-      this.changeFormVisible = true;
-    },
-    submitUpdateGoods() {
-      try {
-        this.chosedGoods.srcid = this.$refs.pictureUpload.$children[1]._props.fileList[0].response;
-      } catch (err) {
-        this.chosedGoods.srcid = 0;
-      }
-      if (this.chosedGoods.gname == "") {
-        this.$message.error("商品名不能为空");
-      } else if (this.chosedGoods.gsave == "") {
-        this.$message.error("库存数量不能为空");
-      } else if (this.chosedGoods.srcid == 0) {
-        this.$message.error("请上传商品实物图");
-      } else {
-        var n = Number(this.chosedGoods.gsave);
-        if (!isNaN(n)) {
-          if (n < 0) {
-            this.$message.error("数量不能为负数");
-          } else {
-            // 从表单读取的值
-            this.chosedGoods.gsave = n;
-            this.changeFormVisible = false;
-            axios.post('http://localhost:8181/storekeeper/updategoods', this.chosedGoods).then(resp => {
-              axios.get('http://localhost:8181/storekeeper/setgoodstime?gid=' + this.chosedGoods.gid + '&time=' + this.uploadTime).then(
-                  resp1 => {
-                    let state='仓库中';
-                    axios.get('http://localhost:8181/storekeeper/searchgoods?gname='+'&state='+state  + '&sid=' + this.storeKeeper.sid).then(resp2 => {
-                      this.goodsData = resp2.data;
-                    })
-                  }
-              )
-            })
-          }
-        } else {
-          this.$message.error("数量必须为数字");
-        }
-      }
-
-    },
-
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-
-    search() {
-      let state = '';
-      if (this.activeIndex === '1') {
-        state = '已上架';
-      } else if (this.activeIndex === '2') {
-        state = '仓库中';
-      }
-      axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + this.searchContext + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-        this.goodsData = resp.data;
-      })
-    },
-
-    delGoods(showingGoods) {
-      this.$confirm('将从仓库永久移除该商品, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        showingGoods.goods.state = '已删除';
-        //   更新远程数据
-        axios.post('http://localhost:8181/storekeeper/updategoodsstate', showingGoods).then(resp => {
-          let state ='仓库中';
-          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-            this.goodsData = resp.data;
-          })
-        })
-
-      }).catch();
-    },
+    // 切换页面
     toPage(page) {
       this.activeIndex = page;
       let state = '';
@@ -489,54 +394,6 @@ export default {
             this.ordersCartsData.push({orders: resp.data[index], carts: resp1.data});
           })
         }
-      })
-
-    },
-    finishOrders(orderIndex, state) {
-
-      // 更新远程数据
-      axios.get('http://localhost:8181/storekeeper/updateodersstate?oid=' + this.ordersCartsData[orderIndex].orders.oid + '&ostate=' + state).then(
-          resp => {
-
-            // 更新本地数据
-            this.ordersCartsData[orderIndex].orders.ostate = state;
-          }
-      )
-
-    },
-
-    changeBathState(state) {
-      for (const index in this.multipleSelection) {
-        let goods = this.multipleSelection[index];
-        goods.goods.state = state;
-        axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
-          let state = '';
-          if (this.activeIndex === '1') {
-            state = '已上架';
-          } else if (this.activeIndex === '2') {
-            state = '仓库中';
-          }
-          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-            this.goodsData = resp.data;
-          })
-        })
-      }
-
-    },
-
-    changeState(goods, state) {
-      // 改变商品state
-      goods.goods.state = state;
-      axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
-        let state = '';
-        if (this.activeIndex === '1') {
-          state = '已上架';
-        } else if (this.activeIndex === '2') {
-          state = '仓库中';
-        }
-        axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-          this.goodsData = resp.data;
-        })
       })
 
     },
@@ -604,7 +461,114 @@ export default {
       this.$store.commit('saveStoreKeeper', {});
       this.$router.push('/');
     },
+    // 商品处理
+    changeGoods(showinggoods) {
+      this.chosedGoods = showinggoods.goods;
+      this.uploadTime = 0;
+      this.srcid = 0;
+      this.changeFormVisible = true;
+    },
+    submitUpdateGoods() {
+      try {
+        this.chosedGoods.srcid = this.$refs.pictureUpload.$children[1]._props.fileList[0].response;
+      } catch (err) {
+        this.chosedGoods.srcid = 0;
+      }
+      if (this.chosedGoods.gname == "") {
+        this.$message.error("商品名不能为空");
+      } else if (this.chosedGoods.gsave == "") {
+        this.$message.error("库存数量不能为空");
+      } else if (this.chosedGoods.srcid == 0) {
+        this.$message.error("请上传商品实物图");
+      } else {
+        var n = Number(this.chosedGoods.gsave);
+        if (!isNaN(n)) {
+          if (n < 0) {
+            this.$message.error("数量不能为负数");
+          } else {
+            // 从表单读取的值
+            this.chosedGoods.gsave = n;
+            this.changeFormVisible = false;
+            axios.post('http://localhost:8181/storekeeper/updategoods', this.chosedGoods).then(resp => {
+              axios.get('http://localhost:8181/storekeeper/setgoodstime?gid=' + this.chosedGoods.gid + '&time=' + this.uploadTime).then(
+                  resp1 => {
+                    let state = '仓库中';
+                    axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp2 => {
+                      this.goodsData = resp2.data;
+                    })
+                  }
+              )
+            })
+          }
+        } else {
+          this.$message.error("数量必须为数字");
+        }
+      }
 
+    },
+    search() {
+      let state = '';
+      if (this.activeIndex === '1') {
+        state = '已上架';
+      } else if (this.activeIndex === '2') {
+        state = '仓库中';
+      }
+      axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + this.searchContext + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+        this.goodsData = resp.data;
+      })
+    },
+    changeState(goods, state) {
+      // 改变商品state
+      goods.goods.state = state;
+      axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
+        let state = '';
+        if (this.activeIndex === '1') {
+          state = '已上架';
+        } else if (this.activeIndex === '2') {
+          state = '仓库中';
+        }
+        axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+          this.goodsData = resp.data;
+        })
+      })
+    },
+    delGoods(showingGoods) {
+      this.$confirm('将从仓库永久移除该商品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        showingGoods.goods.state = '已删除';
+        //   更新远程数据
+        axios.post('http://localhost:8181/storekeeper/updategoodsstate', showingGoods).then(resp => {
+          let state = '仓库中';
+          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+            this.goodsData = resp.data;
+          })
+        })
+
+      }).catch();
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    changeBathState(state) {
+      for (const index in this.multipleSelection) {
+        let goods = this.multipleSelection[index];
+        goods.goods.state = state;
+        axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
+          let state = '';
+          if (this.activeIndex === '1') {
+            state = '已上架';
+          } else if (this.activeIndex === '2') {
+            state = '仓库中';
+          }
+          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+            this.goodsData = resp.data;
+          })
+        })
+      }
+    },
     // 文件处理
     handleRemove(file) {
       this.$refs.pictureUpload.handleRemove(file);
@@ -617,20 +581,12 @@ export default {
     handleExceed() {
       this.$message.error("只能上传一张封面");
     },
-    // handleSuccess(response, file, fileList){
-    //   this.goodsImg=file;
-    //   alert(this.goodsImg.url);
-    // },
-
     submitForm() {
-
-
       try {
         this.goods.srcid = this.$refs.pictureUpload.$children[1]._props.fileList[0].response;
       } catch (err) {
         this.goods.srcid = 0;
       }
-
       if (this.goods.gname == "") {
         this.$message.error("商品名不能为空");
       } else if (this.goods.gsave == "") {
@@ -647,25 +603,17 @@ export default {
             this.goods.gsales = 0;
             this.goods.state = "仓库中";
             this.goods.gonlinenum = 0;
-
-            // 从store读取的值
-            // todo需要重新重store读取并赋值
-            // this.goods.sid = 100;
             this.goods.sid = this.storeKeeper.sid;
-            // this.goods.srcid = 100;
             // 从表单读取的值
             this.goods.gsave = n;
-
             this.dialogFormVisible = false;
             axios.post('http://localhost:8181/storekeeper/addgoods/base', this.goods).then(
                 resp => {
                   if (resp.data != 0) {
                     this.goods = {};
-                    // this.inf=this.goods;
-                    // if (this.activeIndex == '2') {
                     // 跳转到仓库
                     this.activeIndex = '2';
-                    let state ='仓库中';
+                    let state = '仓库中';
                     axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
                       this.goodsData = resp.data;
                     })
@@ -678,13 +626,21 @@ export default {
                   }
                 }
             )
-
-
           }
         } else {
           this.$message.error("数量必须为数字");
         }
       }
+    },
+    // 订单处理
+    finishOrders(orderIndex, state) {
+      // 更新远程数据
+      axios.get('http://localhost:8181/storekeeper/updateodersstate?oid=' + this.ordersCartsData[orderIndex].orders.oid + '&ostate=' + state).then(
+          resp => {
+            // 更新本地数据
+            this.ordersCartsData[orderIndex].orders.ostate = state;
+          }
+      )
     },
   },
   created() {

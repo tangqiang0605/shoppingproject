@@ -46,14 +46,7 @@ const routes = [
     meta: {
       requireAuth: true,
     },
-
-  },{
-  path:'/uilab',
-    name:'uilab',
-    component: ()=>import('../views/uiLab')
   }
-
-
 ]
 
 const router = new VueRouter({

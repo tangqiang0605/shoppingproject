@@ -4,15 +4,9 @@ import com.example.demo.domain.*;
 import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.service.GoodsService;
 import com.example.demo.service.StoreKeeperService;
-import com.sun.javaws.IconUtil;
-import org.apache.catalina.Store;
-import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -79,7 +73,7 @@ public class StoreKeeperController {
      */
     @GetMapping("searchgoods")
     public List<ShowingGoods> searchGoodsByGname(String gname, String state, Integer sid) {
-        return storeKeeperService.searchGoodsByGnamePlus(gname, state, sid);
+        return storeKeeperService.findGoods(gname, state, sid);
     }
 
     ;
@@ -135,7 +129,7 @@ public class StoreKeeperController {
     @PostMapping("updategoodsstate")
     public void updateGoodsState(@RequestBody ShowingGoods showingGoods) {
         Goods goods = showingGoods.getGoods();
-        goodsService.exchange(goods.getGid(), goods.getState());
+        goodsService.updateGoods(goods.getGid(), goods.getState());
     }
 
     /**

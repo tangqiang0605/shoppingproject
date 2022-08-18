@@ -55,16 +55,14 @@ public class DeliveryService {
     }
 
     public void takeOrders(Integer oid,Integer did){
-//        List<ShowingCart> byOid = ordersMapper.findByOid(oid);
         Orders ordersByOid = ordersMapper.findOrdersByOid(oid);
         ordersByOid.setDid(did);
         ordersByOid.setOstate("配送中");
         ordersMapper.updateDidByOid(ordersByOid);
     }
+
     public void finishOrders(Integer oid){
-//        List<ShowingCart> byOid = ordersMapper.findByOid(oid);
         Orders ordersByOid = ordersMapper.findOrdersByOid(oid);
-//        ordersByOid.setDid(did);
         ordersByOid.setOstate("已送达");
         ordersMapper.updateDidByOid(ordersByOid);
     }
