@@ -148,7 +148,7 @@ export default {
           type: 'warning'
         }).then(() => {
           //   更新远程数据
-          axios.get('http://localhost:8181/customer/removeacart?gid=' + this.shopCartsData[shopIndex].carts[cartIndex].gid);
+          axios.get('http://localhost:8181/customer/removeacart?cid='+this.customer.cid+'&gid=' + this.shopCartsData[shopIndex].carts[cartIndex].gid);
           //   更新本地数据
           if (this.shopCartsData[shopIndex].carts.length == 1) {
             this.shopCartsData.splice(shopIndex, 1);

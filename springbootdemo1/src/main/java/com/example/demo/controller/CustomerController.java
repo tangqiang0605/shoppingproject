@@ -122,8 +122,8 @@ public class CustomerController {
      * @param gid
      */
     @GetMapping("removeacart")
-    public void removeACart(Integer gid) {
-        customerService.removeACart(gid);
+    public void removeACart(Integer cid,Integer gid) {
+        customerService.removeACart(cid,gid);
     }
 
     /**

@@ -23,12 +23,13 @@ public class TaskConfig {
     @Scheduled(cron = "0/1 * * * * ?")
     private void updateGoods(){
         Date date=new Date();
-        List<Goods> all = goodsMapper.findAll();
+        List<Goods> all = goodsMapper.findAllByTimeNotNull("仓库中");
         for (Goods g:all) {
             if("仓库中".equals(g.getState())&&g.getTime()!=null){
                 if(g.getTime().before(date)){
-                    goodsMapper.updateState(g.getGid(),"已上架");
-                    goodsMapper.updateTimeByGid(g.getGid(),null);
+                    g.setState("已上架");
+                    g.setTime(null);
+                    goodsMapper.update(g);
 					System.out.println("定时任务：\n\t事件：商品id"+g.getGid()+"上架\n\t执行时间："+LocalDateTime.now());
                 }
             }

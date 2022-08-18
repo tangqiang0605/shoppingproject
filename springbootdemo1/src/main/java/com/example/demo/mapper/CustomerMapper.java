@@ -1,13 +1,8 @@
 package com.example.demo.mapper;
 
-
-import com.example.demo.domain.Cart;
 import com.example.demo.domain.Customer;
-import com.example.demo.domain.StoreKeeper;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Mapper
 @Repository
@@ -21,9 +16,4 @@ public interface CustomerMapper {
 
     @Update("update customer set cname=#{cname},cpassword=#{cpassword}")
     public void update(Customer customer);
-
-    @Select("select * from customer")
-    public List<Customer> findAll();
-
-
 }

@@ -15,23 +15,16 @@ public class ManagerService {
 
     @Autowired
     private StoreKeeperMapper storeKeeperMapper;
-//    private StoreKeeperService storeKeeperService;
 
-    public Boolean tryLogin(String password){
-//        System.out.println(mypassword);
-//        System.out.println(password);
-        if(mypassword.equals(password)){
-            return true;
-        }
-        return false;
+    public Boolean tryLogin(String password) {
+        return mypassword.equals(password);
     }
 
-    public List<StoreKeeper> findAllStoreKeeper(){
+    public List<StoreKeeper> findAllStoreKeeper() {
         return storeKeeperMapper.findAll();
     }
 
-    public void updateStoreKeeper(StoreKeeper storeKeeper){
-//        System.out.println(storeKeeper);
+    public void updateStoreKeeper(StoreKeeper storeKeeper) {
         storeKeeperMapper.update(storeKeeper);
     }
 }

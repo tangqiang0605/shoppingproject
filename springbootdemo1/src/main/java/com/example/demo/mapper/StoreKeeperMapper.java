@@ -1,6 +1,5 @@
 package com.example.demo.mapper;
 
-import com.example.demo.domain.Customer;
 import com.example.demo.domain.StoreKeeper;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -22,8 +21,4 @@ public interface StoreKeeperMapper {
 
     @Select("select * from storekeeper")
     public List<StoreKeeper> findAll();
-
-//    public void updateGoods
-
-
 }

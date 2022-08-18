@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.*;
-import com.example.demo.mapper.CartMapper;
 import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.mapper.OrdersMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,17 @@ public class GoodsService {
 
     @Autowired
     private GoodsMapper goodsMapper;
-//    @Autowired
-//    private CartMapper cartMapper;
+
     @Autowired
     private OrdersMapper ordersMapper;
-    public List<Goods> findAll() {
-        return goodsMapper.findAll();
-    }
+
+//    /**
+//     * 查找所有含时间的商品,用于定时任务
+//     * @return
+//     */
+//    public List<Goods> findAllByTimeNotNull() {
+//        return goodsMapper.findAllByTimeNotNull();
+//    }
 
     /**
      * 搜索店铺
@@ -49,27 +52,22 @@ public class GoodsService {
         byGid.setGsave(byGid.getGonlinenum());
         byGid.setGonlinenum(temp);
         byGid.setState(state);
-        goodsMapper.exchange(byGid);
+        goodsMapper.update(byGid);
     }
 
     public List<ShowingCart> getOrderson(Integer oid) {
         return ordersMapper.findByOid(oid);
     }
     public void setGoodsTime(Integer gid, Long time){
-//        String strTime = "1660807830000";
-//        Long longTime = Long.parseLong(strTime);
         if(time==0||time==null){
-//            goodsService.setGoodsTime();
             goodsMapper.updateTimeByGid(gid,null);
         }else{
-
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = formatter.format(time);
         Date newTime = null;
         try {
             newTime = formatter.parse(dateString);
         } catch (ParseException e) {
-//            e.printStackTrace();
             System.out.println("GoodsService.setGoodsTime报错啦！！！");
         }
         goodsMapper.updateTimeByGid(gid,newTime);
@@ -77,7 +75,7 @@ public class GoodsService {
     }
 
     public List<ShowingGoods> showShop(Integer sid) {
-        return goodsMapper.searchByNamePlus("", "已上架",sid);
+        return goodsMapper.selectByNamePlus("", "已上架",sid);
     }
 
 

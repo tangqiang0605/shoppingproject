@@ -9,34 +9,66 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author taipanlang
+ */
 @Mapper
 @Repository
 public interface GoodsMapper {
 
-    @Delete("delete from goods where gid=#{gid}")
-    public void delByGid(Integer gid);
+    /**
+     * 添加商品
+     *
+     * @param goods
+     */
+    @Insert("insert into goods values(null,#{gsave},#{gsales},#{sid},#{state},#{srcid},#{gname},#{gonlinenum},#{time})")
+    @Options(useGeneratedKeys = true, keyProperty = "gid", keyColumn = "gid")
+    void insert(Goods goods);
 
-    @Update("update goods set state=#{state} where gid=#{gid}")
-    public void updateState(Integer gid,String state);
+    /**
+     * 修改商品1
+     * 可以和前端直接匹配的数据
+     * @param goods
+     */
+    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},gonlinenum=#{gonlinenum},time=#{time} where gid=#{gid}")
+    void update(Goods goods);
 
-    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},gonlinenum=#{gonlinenum} where gid=#{gid}")
-    public void exchange(Goods goods);
+    /**
+     * 修改商品2
+     * 这个和更新商品分开,这里的service处理的是前端传来数据不能自动匹配的.
+     * @param gid
+     * @param time
+     */
+    @Update("update goods set time=#{time} where gid=#{gid}")
+    void updateTimeByGid(Integer gid, Date time);
+
 
     @Select("select * from goods where gid=#{gid}")
-    public Goods findByGid(Integer gid);
+    Goods findByGid(Integer gid);
 
+    /**
+     * 用于顾客获取订单的
+     * @param sid
+     * @return
+     */
     @Select("select gid from goods where sid=#{sid}")
-    public List<Integer> findByShop(Integer sid);
+    List<Integer> findByShop(Integer sid);
 
     @Select("select s.sid,s.sname,sum(gsales) totalsales,count(gid) onlinegoodsnum\n" +
             "    from storekeeper as s,goods\n" +
             "    where s.sid=goods.sid and goods.state=#{state} and s.sname like concat('%',#{sname},'%')\n" +
             "    group by s.sid;")
-    public List<Shops> searchShops(String sname,String state);
+    List<Shops> searchShops(String sname, String state);
 
-    @Select("select * from goods")
-    public List<Goods> findAll();
+    @Select("select * from goods where time is not null and state=#{state}")
+    List<Goods> findAllByTimeNotNull(String state);
 
+    /**
+     * 这个是顾客用的,包括所有商家.plus是给商家用的,查询条件增加了商家id
+     * @param gname
+     * @param state
+     * @return
+     */
     @Select("select * from storekeeper,goods,src \n" +
             "where goods.srcid=src.srcid \n" +
             "  and state=#{state} \n" +
@@ -46,8 +78,8 @@ public interface GoodsMapper {
             @Result(column = "srcurl", property = "srcurl"),
             @Result(column = "sname", property = "sname"),
             @Result(column = "gid", property = "goods.gid"),
-            @Result(column = "state",property = "goods.state"),
-            @Result(column = "gsave",property = "goods.gsave"),
+            @Result(column = "state", property = "goods.state"),
+            @Result(column = "gsave", property = "goods.gsave"),
             @Result(column = "gsales", property = "goods.gsales"),
             @Result(column = "sid", property = "goods.sid"),
             @Result(column = "gsales", property = "goods.gsales"),
@@ -55,7 +87,7 @@ public interface GoodsMapper {
             @Result(column = "gonlinenum", property = "goods.gonlinenum"),
             @Result(column = "time", property = "goods.time"),
     })
-    public List<ShowingGoods> searchByName(String gname,String state);
+    List<ShowingGoods> searchByName(String gname, String state);
 
     @Select("select * from storekeeper,goods,src \n" +
             "where goods.srcid=src.srcid \n" +
@@ -67,8 +99,8 @@ public interface GoodsMapper {
             @Result(column = "srcurl", property = "srcurl"),
             @Result(column = "sname", property = "sname"),
             @Result(column = "gid", property = "goods.gid"),
-            @Result(column = "state",property = "goods.state"),
-            @Result(column = "gsave",property = "goods.gsave"),
+            @Result(column = "state", property = "goods.state"),
+            @Result(column = "gsave", property = "goods.gsave"),
             @Result(column = "gsales", property = "goods.gsales"),
             @Result(column = "sid", property = "goods.sid"),
             @Result(column = "gsales", property = "goods.gsales"),
@@ -76,12 +108,6 @@ public interface GoodsMapper {
             @Result(column = "gonlinenum", property = "goods.gonlinenum"),
             @Result(column = "time", property = "goods.time"),
     })
-    public List<ShowingGoods> searchByNamePlus(String gname,String state,Integer sid);
+    List<ShowingGoods> selectByNamePlus(String gname, String state, Integer sid);
 
-    @Insert("insert into goods values(null,#{gsave},#{gsales},#{sid},#{state},#{srcid},#{gname},#{gonlinenum},#{time})")
-    @Options(useGeneratedKeys = true, keyProperty = "gid", keyColumn = "gid")
-    public void insert(Goods goods);
-
-    @Update("update goods set time=#{time} where gid=#{gid}")
-    public void updateTimeByGid(Integer gid,Date time);
 }

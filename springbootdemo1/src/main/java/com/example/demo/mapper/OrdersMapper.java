@@ -11,9 +11,6 @@ import java.util.List;
 @Repository
 public interface OrdersMapper {
 
-//    @Select("select * from orders where sid=#{sid}")
-//    public List<Orders> findBySid(Integer sid);
-
     @Select("select * from orders where oid=#{oid}")
     public Orders findOrdersByOid(Integer oid);
 

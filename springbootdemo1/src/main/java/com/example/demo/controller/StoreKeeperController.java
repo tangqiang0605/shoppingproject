@@ -64,23 +64,6 @@ public class StoreKeeperController {
         return "更新成功";
     }
 
-
-
-//    @GetMapping("findgoodsbysid")
-//    public List<ShowingGoods> findGoodsBySid(Integer sid){
-//        return storeKeeperService.findGoodsBySid(sid);
-//    }
-//
-//    /**
-//     * 展示仓库
-//     * @param sid
-//     * @return
-//     */
-//    @GetMapping("showrepository")
-//    public List<ShowingGoods> showRepository(Integer sid){return storeKeeperService.findRepository(sid);}
-
-
-
     /**
      * 搜索商家商品
      * 支持在线的和仓库的
@@ -105,7 +88,7 @@ public class StoreKeeperController {
     }
 
     /**
-     * 更新商家的订单
+     * 修改商家的订单状态
      * @param oid
      * @param ostate
      */
@@ -116,7 +99,7 @@ public class StoreKeeperController {
     }
 
     /**
-     * 添加商品
+     * 商品操作-商家:添加商品
      * @param goods
      * @return
      */
@@ -136,6 +119,7 @@ public class StoreKeeperController {
 
     /**
      * 商品操作-商家:设置定时上架
+     * 和修改商品一起被前端调用.
      * @param gid
      * @param time
      */

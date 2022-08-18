@@ -44,6 +44,12 @@ public class SrcController {
         return srcService.add(src);
     }
 
+    /**
+     * 下载文件
+     * @param response
+     * @param flag
+     * @return
+     */
     @GetMapping("{flag}")
     public String getFiles(HttpServletResponse response, @PathVariable String flag) {
         String basePath = System.getProperty("user.dir") + "\\springbootdemo1\\src\\main\\resources\\files\\";

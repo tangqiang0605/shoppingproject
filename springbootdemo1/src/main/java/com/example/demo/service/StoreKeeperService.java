@@ -5,7 +5,6 @@ import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.mapper.OrdersMapper;
 import com.example.demo.mapper.SrcMapper;
 import com.example.demo.mapper.StoreKeeperMapper;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,7 +85,7 @@ public class StoreKeeperService {
 //    }
 
     public List<ShowingGoods> searchGoodsByGnamePlus(String gname,String state,Integer sid) {
-        return goodsMapper.searchByNamePlus(gname, state,sid);
+        return goodsMapper.selectByNamePlus(gname, state,sid);
     }
 
 
@@ -102,7 +101,7 @@ public class StoreKeeperService {
 
     public void updateGoods(Goods goods){
 //        goodsMapper.findByGid(gid);
-        goodsMapper.exchange(goods);
+        goodsMapper.update(goods);
     }
 
 }

@@ -59,7 +59,7 @@ class DemoApplicationTests {
 
 	@Test
 	void t4CartMapper(){
-		System.out.println(cartMapper.findAll());
+//		System.out.println(cartMapper.findAll());
 	}
 
 	@Test
@@ -72,7 +72,7 @@ class DemoApplicationTests {
 //		}
 //		customerService.removeCarts(1,100);
 //		customerService.pay(1,101,"到店购买");
-		customerService.pay(1,101,"快跑配送");
+//		customerService.pay(1,101,"快跑配送");
 //		customerService.pay(1,103,"快跑配送");
 
 

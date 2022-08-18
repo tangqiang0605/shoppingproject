@@ -49,7 +49,6 @@ public class CustomerService {
 
     public String pay(Integer cid, Integer sid, String receiveWay) {
 //        确定购物车中是否有该店铺的商品
-//        List<ShowingGoods> showingGoods=new LinkedList<>();
         String result=new String();
         List<ShowingCart> carts = cartMapper.findCarts(cid, sid);
         if (carts != null) {
@@ -65,12 +64,11 @@ public class CustomerService {
                 if (s.getOamount().equals(byGid.getGonlinenum())) {
 //                    如果商品售出后在线数量为0，下架商品。
                     byGid.setState("仓库中");
-//                    showingGoods.add()
                     result="商品下架";
                 }
                 byGid.setGonlinenum(byGid.getGonlinenum()-s.getOamount());
                 byGid.setGsales(byGid.getGsales()+s.getOamount());
-                goodsMapper.exchange(byGid);
+                goodsMapper.update(byGid);
             }
 //        删除购物车
             this.removeCarts(cid, sid);
@@ -91,7 +89,6 @@ public class CustomerService {
 //            新增加的+购物车中的
             cart.setOamount(cart.getOamount() + record.getOamount());
             this.updateCart(cart);
-//            cartMapper.updateRecord(cart);
         }
         return "已加入购物车";
     }
@@ -103,24 +100,17 @@ public class CustomerService {
     public void removeCarts(Integer cid, Integer sid) {
         List<Integer> byShop = goodsMapper.findByShop(sid);
         for (Integer i : byShop) {
-            removeACart(i);
+            removeACart(cid,i);
         }
     }
 
-    public void removeACart(Integer gid) {
-        cartMapper.delByGid(gid);
+    public void removeACart(Integer cid,Integer gid) {
+        cartMapper.delByGid(cid,gid);
     }
 
     public Integer signUp(Customer customer) {
         customerMapper.insert(customer);
         return customer.getCid();
-//        Customer byId = customerMapper.findById(customer.getCid());
-//        if (byId==null){
-//            customerMapper.insert(customer);
-//            return customer.getCid();
-//        }else {
-//            return 0;
-//        }
     }
 
     public String tryLogin(Customer customer) {
@@ -144,15 +134,6 @@ public class CustomerService {
 
     public void update(Customer customer) {
         customerMapper.update(customer);
-    }
-
-    public List<Customer> findAll() {
-        return customerMapper.findAll();
-    }
-
-    public int add(Customer customer) {
-        customerMapper.insert(customer);
-        return customer.getCid();
     }
 
     public List<Shops> findShops(Integer cid) {

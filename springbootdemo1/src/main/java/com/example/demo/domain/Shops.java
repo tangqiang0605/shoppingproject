@@ -12,5 +12,4 @@ public class Shops {
     private String sname;
     private Integer totalsales;
     private Integer onlinegoodsnum;
-
 }
