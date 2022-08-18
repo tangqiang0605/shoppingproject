@@ -60,12 +60,6 @@ public class CustomerService {
                 ordersMapper.insertSon(oid, s.getGid(), s.getOamount());
                 //            商品在线数量减少，销售量增加。
                 Goods byGid = goodsMapper.findByGid(s.getGid());
-//                ==比较地址，equals比较值
-                if (s.getOamount().equals(byGid.getGonlinenum())) {
-//                    如果商品售出后在线数量为0，下架商品。
-                    byGid.setState("仓库中");
-                    result="商品下架";
-                }
                 byGid.setGonlinenum(byGid.getGonlinenum()-s.getOamount());
                 byGid.setGsales(byGid.getGsales()+s.getOamount());
                 goodsMapper.update(byGid);

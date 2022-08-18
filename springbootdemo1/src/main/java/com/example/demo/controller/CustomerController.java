@@ -109,7 +109,7 @@ public class CustomerController {
 
     /**
      * 购物车操作:修改商品数量
-     * todo:缺少一个商品存量判断,但是在支付时已有,可以暂时不做
+     * todo:缺少一个商品存量判断,但是在支付时已有,可以暂时不做.用户在购物车加商品,就算超出在售数量也没有提示.可以在前端提示.
      * @param cart
      */
     @PostMapping("updatecart")

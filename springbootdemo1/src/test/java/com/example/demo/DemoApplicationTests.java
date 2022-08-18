@@ -63,6 +63,11 @@ class DemoApplicationTests {
 	}
 
 	@Test
+	void t4TaskConfig(){
+		System.out.println(goodsMapper.searchByName("", "已上架"));
+	}
+
+	@Test
 	void t4CustomerService(){
 //		System.out.println(cartMapper.findAll());
 //		List<Shops> shops = customerService.findShops(1);

@@ -46,6 +46,7 @@ public class GoodsService {
 //    public void updateState(Integer gid,String state){
 //        goodsMapper.updateState(gid,state);
 //    }
+//    todo:删减接口
     public void exchange(Integer gid, String state) {
         Goods byGid = goodsMapper.findByGid(gid);
         Integer temp = byGid.getGsave();
