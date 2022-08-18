@@ -11,13 +11,15 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 配置定时任务类
+ */
 @Configuration
 @EnableScheduling
 public class TaskConfig {
     @Autowired
     private GoodsMapper goodsMapper;
 
-//    @Scheduled(cron = "* * * * * ? *")
     @Scheduled(cron = "0/1 * * * * ?")
     private void updateGoods(){
         Date date=new Date();
@@ -31,18 +33,6 @@ public class TaskConfig {
                 }
             }
         }
-
-//        System.out.println("执行定时任务 " + LocalDateTime.now());
     }
 
-//    @Configuration  //标记配置类
-// 2 @EnableScheduling   //开启定时任务
-// 3 public class MyScheduleConfig {
-// 4
-//         5     //添加定时任务
-//         6     @Scheduled(cron = "0/5 * * * * ?")
-// 7     private void myTasks() {
-//            8         System.out.println("执行定时任务 " + LocalDateTime.now());
-//            9     }
-//10 }
 }

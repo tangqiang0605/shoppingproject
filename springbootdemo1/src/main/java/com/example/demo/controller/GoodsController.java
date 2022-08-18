@@ -11,47 +11,43 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * 网站公开页相关接口
+ * @author taipanlang
+ */
 @RestController
 @RequestMapping("goods")
 public class GoodsController {
     @Autowired
     private GoodsService goodsService;
 
-    @GetMapping("show")
-    public List<ShowingGoods> show(){
-        return goodsService.show();
-    }
-
-    @GetMapping("findall")
-    public List<Goods> findAll(){
-        return goodsService.findAll();
-    }
-
-    @GetMapping("shops")
-    public List<Shops> allShops(){
-        return goodsService.allShops();
-    }
-
-    @GetMapping("shop")
-    public List<ShowingGoods> showShop(Integer sid){
-//        System.out.println(sid);
-        return goodsService.showShop(sid);
-    }
-
+    /**
+     * 搜索商品
+     * @param gname
+     * @return
+     */
     @GetMapping("searchgoods")
-    public List<ShowingGoods> searchGoods(String gname){
+    public List<ShowingGoods> searchGoods(String gname) {
         return goodsService.searchGoods(gname);
     }
+
+    /**
+     * 搜索店铺
+     * @param sname
+     * @return
+     */
     @GetMapping("searchshops")
-    public List<Shops> searchShops(String sname){
+    public List<Shops> searchShops(String sname) {
         return goodsService.searchShop(sname);
     }
 
-
-    @GetMapping("setgoodstime")
-    public void setGoodsTime(Integer gid,Long time){
-        // finish: 2022/8/17 long为空怎么办
-        goodsService.setGoodsTime(gid,time);
+    /**
+     * 商店页面
+     * @param sid
+     * @return
+     */
+    @GetMapping("shop")
+    public List<ShowingGoods> showShop(Integer sid) {
+        return goodsService.showShop(sid);
     }
-
 }

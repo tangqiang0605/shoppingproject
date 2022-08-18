@@ -4,8 +4,8 @@
     <el-row>
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
-          <el-menu-item index="1" @click="toOnline">已上架</el-menu-item>
-          <el-menu-item index="2" @click="toRepository">仓库中</el-menu-item>
+          <el-menu-item index="1" @click="toPage('1')">已上架</el-menu-item>
+          <el-menu-item index="2" @click="toPage('2')">仓库中</el-menu-item>
           <el-menu-item index="3" @click="toOrders">订单处理</el-menu-item>
         </el-menu>
       </el-col>
@@ -71,9 +71,9 @@
           </el-upload>
 
         </el-form-item>
-<!--        <el-form-item label="" :label-width="formLabelWidth">-->
-<!--          <el-input v-model="goods.gsave" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="" :label-width="formLabelWidth">-->
+        <!--          <el-input v-model="goods.gsave" autocomplete="off"></el-input>-->
+        <!--        </el-form-item>-->
 
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -86,7 +86,7 @@
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
 
-<!--    修改商品-->
+    <!--    修改商品-->
     <el-dialog :title="title" :visible.sync="changeFormVisible">
       <el-form :model="chosedGoods">
         <el-form-item label="商品名" :label-width="formLabelWidth">
@@ -96,8 +96,9 @@
           <el-input v-model="chosedGoods.gsave" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="定时上架" :label-width="formLabelWidth">
-<!--          <el-input v-model="chosedGoods.time" autocomplete="off"></el-input>-->
-          <el-date-picker v-model="uploadTime" type="datetime" value-format="timestamp" placeholder="选择日期时间"></el-date-picker>
+          <!--          <el-input v-model="chosedGoods.time" autocomplete="off"></el-input>-->
+          <el-date-picker v-model="uploadTime" type="datetime" value-format="timestamp"
+                          placeholder="选择日期时间"></el-date-picker>
         </el-form-item>
         <el-form-item label="实物图" :label-width="formLabelWidth">
           <el-upload
@@ -144,7 +145,6 @@
         <el-button type="primary" @click="submitUpdateGoods()">确 定</el-button>
       </div>
     </el-dialog>
-
 
 
     <!--不展示的表格-->
@@ -235,9 +235,6 @@
         </el-table-column>
 
 
-
-
-
         <!--        <el-table-column-->
         <!--            prop="sname"-->
         <!--            label="店铺名称"-->
@@ -304,9 +301,6 @@
             prop="srcurl"
             label="商品图"
             width="180">
-          <!--          <template slot-scope="scope">-->
-          <!--            <el-image :src="scope.srcurl"></el-image>-->
-          <!--          </template>-->
           <template slot-scope="scope">
             <el-image
                 fit="contain"
@@ -408,16 +402,16 @@ export default {
   // components: {AddGoods},
   data() {
     return {
-      uploadTime:0,
+      uploadTime: 0,
       searchContext: '',
-      chosedGoods:{},
+      chosedGoods: {},
 
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
       isLogin: false,
 
-      changeFormVisible:false,
+      changeFormVisible: false,
       dialogFormVisible: false,
       goods: {
         gid: 0,
@@ -456,23 +450,17 @@ export default {
   },
   methods: {
     changeGoods(showinggoods) {
-      this.chosedGoods=showinggoods.goods;
-      // console.log(showinggoods.goods.gname);
-      this.uploadTime=0;
-      this.srcid=0;
-      // console.log(this.chosedGoods.goods.gname);
-      this.changeFormVisible=true;
-      // this.
-      // console.log(this.chosedGoods);
-
+      this.chosedGoods = showinggoods.goods;
+      this.uploadTime = 0;
+      this.srcid = 0;
+      this.changeFormVisible = true;
     },
-    submitUpdateGoods(){
+    submitUpdateGoods() {
       try {
         this.chosedGoods.srcid = this.$refs.pictureUpload.$children[1]._props.fileList[0].response;
       } catch (err) {
         this.chosedGoods.srcid = 0;
       }
-
       if (this.chosedGoods.gname == "") {
         this.$message.error("商品名不能为空");
       } else if (this.chosedGoods.gsave == "") {
@@ -485,54 +473,19 @@ export default {
           if (n < 0) {
             this.$message.error("数量不能为负数");
           } else {
-            // 默认值
-            // this.goods.gsales = 0;
-            // this.goods.state = "仓库中";
-            // this.goods.gonlinenum = 0;
-
-            // 从store读取的值
-            // todo需要重新重store读取并赋值
-            // this.goods.sid = 100;
-            // this.goods.sid = this.storeKeeper.sid;
-            // this.goods.srcid = 100;
             // 从表单读取的值
             this.chosedGoods.gsave = n;
-
             this.changeFormVisible = false;
-            console.log(this.chosedGoods);
-            axios.post('http://localhost:8181/storekeeper/updategoods',this.chosedGoods).then(resp=>{
-              axios.get('http://localhost:8181/goods/setgoodstime?gid='+this.chosedGoods.gid+'&time='+this.uploadTime).then(
-                  resp1=>{
-                    axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
-                      this.goodsData = resp.data;
+            axios.post('http://localhost:8181/storekeeper/updategoods', this.chosedGoods).then(resp => {
+              axios.get('http://localhost:8181/storekeeper/setgoodstime?gid=' + this.chosedGoods.gid + '&time=' + this.uploadTime).then(
+                  resp1 => {
+                    let state='仓库中';
+                    axios.get('http://localhost:8181/storekeeper/searchgoods?gname='+'&state='+state  + '&sid=' + this.storeKeeper.sid).then(resp2 => {
+                      this.goodsData = resp2.data;
                     })
                   }
-
               )
             })
-
-            // console.log(this.chosedGoods);
-
-            // axios.post('http://localhost:8181/storekeeper/addgoods/base', this.goods).then(
-            //     resp => {
-            //       if (resp.data != 0) {
-            //         this.goods = {};
-            //         // 跳转到仓库
-            //         this.activeIndex = '2';
-            //         axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp1 => {
-            //           this.goodsData = resp1.data;
-            //         })
-            //         this.$message({
-            //           message: '添加成功，返回商品id' + resp.data,
-            //           type: 'success'
-            //         });
-            //       } else {
-            //         this.$message.error("storekeeper接口报错，添加进数据库时数据不匹配出现问题返回id0");
-            //       }
-            //     }
-            // )
-
-
           }
         } else {
           this.$message.error("数量必须为数字");
@@ -541,23 +494,14 @@ export default {
 
     },
 
-
-    // handleSelectionChange1(val) {
-    //   // this.multipleSelection = val;
-    //   console.log(val);
-    //
-    // },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      // console.log(val);
-
     },
 
     search() {
-      var state = '';
+      let state = '';
       if (this.activeIndex === '1') {
         state = '已上架';
-
       } else if (this.activeIndex === '2') {
         state = '仓库中';
       }
@@ -567,7 +511,6 @@ export default {
     },
 
     delGoods(showingGoods) {
-
       this.$confirm('将从仓库永久移除该商品, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -576,30 +519,23 @@ export default {
         showingGoods.goods.state = '已删除';
         //   更新远程数据
         axios.post('http://localhost:8181/storekeeper/updategoodsstate', showingGoods).then(resp => {
-          axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
+          let state ='仓库中';
+          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
             this.goodsData = resp.data;
           })
         })
-        //   更新本地数据
-        // if (this.shopCartsData[shopIndex].carts.length == 1) {
-        //   this.shopCartsData.splice(shopIndex, 1);
-        // } else {
-        //   this.shopCartsData[shopIndex].carts.splice(cartIndex, 1);
-        // }
+
       }).catch();
     },
-
-
-    toOnline() {
-      this.activeIndex = '1';
-      axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
-        this.goodsData = resp.data;
-      })
-    },
-    toRepository() {
-      this.activeIndex = '2';
-      // alert(this.activeIndex);
-      axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
+    toPage(page) {
+      this.activeIndex = page;
+      let state = '';
+      if (this.activeIndex === '1') {
+        state = '已上架';
+      } else if (this.activeIndex === '2') {
+        state = '仓库中';
+      }
+      axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
         this.goodsData = resp.data;
       })
     },
@@ -631,21 +567,18 @@ export default {
 
     changeBathState(state) {
       for (const index in this.multipleSelection) {
-        var goods = this.multipleSelection[index];
+        let goods = this.multipleSelection[index];
         goods.goods.state = state;
-        // console.log(goods.goods);
         axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
-          if (this.activeIndex == '1') {
-            axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
-              // 修改本地数据
-              this.goodsData = resp.data;
-            })
-          } else if (this.activeIndex == '2') {
-            axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
-              this.goodsData = resp.data;
-            })
+          let state = '';
+          if (this.activeIndex === '1') {
+            state = '已上架';
+          } else if (this.activeIndex === '2') {
+            state = '仓库中';
           }
-
+          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+            this.goodsData = resp.data;
+          })
         })
       }
 
@@ -654,19 +587,16 @@ export default {
     changeState(goods, state) {
       // 改变商品state
       goods.goods.state = state;
-      // console.log(goods.goods);
       axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
-        if (this.activeIndex == '1') {
-          axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
-            // 修改本地数据
-            this.goodsData = resp.data;
-          })
-        } else if (this.activeIndex == '2') {
-          axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
-            this.goodsData = resp.data;
-          })
+        let state = '';
+        if (this.activeIndex === '1') {
+          state = '已上架';
+        } else if (this.activeIndex === '2') {
+          state = '仓库中';
         }
-
+        axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+          this.goodsData = resp.data;
+        })
       })
 
     },
@@ -795,21 +725,14 @@ export default {
                     // if (this.activeIndex == '2') {
                     // 跳转到仓库
                     this.activeIndex = '2';
-                    axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp1 => {
-                      this.goodsData = resp1.data;
+                    let state ='仓库中';
+                    axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+                      this.goodsData = resp.data;
                     })
-                    // }
                     this.$message({
                       message: '添加成功，返回商品id' + resp.data,
                       type: 'success'
                     });
-
-
-                    // alert(this.activeIndex);
-                    // axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp2 => {
-                    //   this.goodsData = resp2.data;
-                    // })
-
                   } else {
                     this.$message.error("storekeeper接口报错，添加进数据库时数据不匹配出现问题返回id0");
                   }
@@ -818,8 +741,6 @@ export default {
 
 
           }
-
-
         } else {
           this.$message.error("数量必须为数字");
         }
@@ -827,21 +748,17 @@ export default {
     },
   },
   created() {
-    this.activeIndex='2';
-
     this.storeKeeper = this.$store.state.storeKeeper;
     this.isLogin = true;
-    if (this.activeIndex == '1') {
-      axios.get('http://localhost:8181/storekeeper/findgoodsbysid?sid=' + this.storeKeeper.sid).then(resp => {
-        this.goodsData = resp.data;
-        // this.testInf=resp.data;
-      })
-
-    } else if (this.activeIndex == '2') {
-      axios.get('http://localhost:8181/storekeeper/showrepository?sid=' + this.storeKeeper.sid).then(resp => {
-        this.goodsData = resp.data;
-      })
+    let state = '';
+    if (this.activeIndex === '1') {
+      state = '已上架';
+    } else if (this.activeIndex === '2') {
+      state = '仓库中';
     }
+    axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
+      this.goodsData = resp.data;
+    })
   }
 
 }

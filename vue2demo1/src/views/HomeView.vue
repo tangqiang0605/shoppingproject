@@ -1,14 +1,12 @@
 <template>
   <div class="home">
-    <!--    测试信息-->
-    <!--    {{ testInf }}-->
     <!--    导航栏-->
     <el-row>
       <!--      导航栏左-->
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
-          <el-menu-item index="1" @click="toGoods">商品</el-menu-item>
-          <el-menu-item index="2" @click="toShops">店铺</el-menu-item>
+          <el-menu-item index="1" @click="toPage('1')">商品</el-menu-item>
+          <el-menu-item index="2" @click="toPage('1')">店铺</el-menu-item>
         </el-menu>
       </el-col>
       <!--      导航栏中-->
@@ -262,8 +260,6 @@ export default {
   name: 'HomeView',
   data() {
     return {
-      // 输出测试信息
-      // testInf: "",
       // 导航栏
       activeIndex: '1',
       // 登录与注册的弹窗控制
@@ -315,27 +311,15 @@ export default {
   },
   methods: {
     // 导航栏切换
-    toGoods() {
+    toPage(page) {
       // 设置导航栏
-      this.activeIndex = '1';
+      this.activeIndex = page;
       // 重置搜索框
       this.search = '';
       this.searchHint = this.searchText[0];
       // 从服务器获取商品信息
-      axios.get("http://localhost:8181/goods/show").then(resp => {
+      axios.get('http://localhost:8181/goods/searchgoods?gname=').then(resp => {
         this.goodsData = resp.data;
-      })
-    },
-    toShops() {
-      // 设置导航栏
-      this.activeIndex = '2';
-      // 重置搜索栏
-      this.search = '';
-      this.searchHint = this.searchText[1];
-      // 从服务器获取店铺信息
-      axios.get('http://localhost:8181/goods/shops').then(resp => {
-        this.shopsData = resp.data;
-        this.testInf = this.shopsData;
       })
     },
     //登录与注册检查
@@ -545,7 +529,6 @@ export default {
           });
           // 登录的关闭弹窗可以写在任意地方，但是注册的关闭弹窗后面不可以太紧跟着下一个弹窗的打开
           this.delivery.did = resp.data;
-          this.testInf = this.delivery;
           this.deliveryLoginVisible = true;
         });
       }
@@ -693,14 +676,14 @@ export default {
     }
     if (this.activeIndex === '1') {
       // 从服务器获取商品信息
-      axios.get("http://localhost:8181/goods/show").then(resp => {
+      axios.get('http://localhost:8181/goods/searchgoods?gname=').then(resp => {
         this.goodsData = resp.data;
       })
     } else if (this.activeIndex === '2') {
       // 从服务器获取店铺信息
-      axios.get('http://localhost:8181/goods/shops').then(resp => {
+      axios.get('http://localhost:8181/goods/searchshops?sname=').then(resp => {
         this.shopsData = resp.data;
-      })
+      });
     }
   },
 

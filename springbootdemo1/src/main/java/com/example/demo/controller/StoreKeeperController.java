@@ -64,57 +64,93 @@ public class StoreKeeperController {
         return "更新成功";
     }
 
-    @PostMapping("addgoods/base")
-    public int addGoodsBase(@RequestBody Goods goods){
-        return storeKeeperService.addGoods(goods);
-    }
 
-    @GetMapping("findgoodsbysid")
-    public List<ShowingGoods> findGoodsBySid(Integer sid){
-        return storeKeeperService.findGoodsBySid(sid);
-    }
 
-    @GetMapping("showrepository")
-    public List<ShowingGoods> showRepository(Integer sid){return storeKeeperService.findRepository(sid);}
+//    @GetMapping("findgoodsbysid")
+//    public List<ShowingGoods> findGoodsBySid(Integer sid){
+//        return storeKeeperService.findGoodsBySid(sid);
+//    }
+//
+//    /**
+//     * 展示仓库
+//     * @param sid
+//     * @return
+//     */
+//    @GetMapping("showrepository")
+//    public List<ShowingGoods> showRepository(Integer sid){return storeKeeperService.findRepository(sid);}
 
-    @PostMapping("updategoodsstate")
-    public void updateGoodsState(@RequestBody ShowingGoods showingGoods){
-        Goods goods = showingGoods.getGoods();
-//        System.out.println(goods);
 
-        goodsService.exchange(goods.getGid(),goods.getState());
-    }
 
+    /**
+     * 搜索商家商品
+     * 支持在线的和仓库的
+     * @param gname
+     * @param state
+     * @param sid
+     * @return
+     */
     @GetMapping("searchgoods")
     public List<ShowingGoods> searchGoodsByGname(String gname,String state,Integer sid){
         return storeKeeperService.searchGoodsByGnamePlus(gname, state,sid);
     };
 
+    /**
+     * 获取商家的订单
+     * @param sid
+     * @return
+     */
+    @GetMapping("getorders")
+    public List<Orders> getOrders(Integer sid) {
+        return storeKeeperService.getOrders(sid);
+    }
+
+    /**
+     * 更新商家的订单
+     * @param oid
+     * @param ostate
+     */
     @GetMapping("updateodersstate")
     public void updateOrdersState(Integer oid,String ostate)
     {
         storeKeeperService.updateOdersState(oid,ostate);
     }
 
-    @GetMapping("getorders")
-    public List<Orders> getOrders(Integer sid) {
-        return storeKeeperService.getOrders(sid);
+    /**
+     * 添加商品
+     * @param goods
+     * @return
+     */
+    @PostMapping("addgoods/base")
+    public int addGoodsBase(@RequestBody Goods goods){
+        return storeKeeperService.addGoods(goods);
     }
 
-//    @GetMapping("time")
-//    public void test4time(Date time){
-//
-//        System.out.println(time);
-//        Date time2=new Date();
-//        System.out.println(time2);
-//        goodsMapper.updateTime(time);
-//        System.out.println(time);
-//    }
-
+    /**
+     * 商品操作-商家:修改商品
+     * @param goods
+     */
     @PostMapping("updategoods")
     public void updateGoods(@RequestBody Goods goods){
         storeKeeperService.updateGoods(goods);
-//        System.out.println(goods);
     }
 
+    /**
+     * 商品操作-商家:设置定时上架
+     * @param gid
+     * @param time
+     */
+    @GetMapping("setgoodstime")
+    public void setGoodsTime(Integer gid, Long time) {
+        goodsService.setGoodsTime(gid, time);
+    }
+
+    /**
+     * 商品操作:上下架
+     * @param showingGoods
+     */
+    @PostMapping("updategoodsstate")
+    public void updateGoodsState(@RequestBody ShowingGoods showingGoods){
+        Goods goods = showingGoods.getGoods();
+        goodsService.exchange(goods.getGid(),goods.getState());
+    }
 }

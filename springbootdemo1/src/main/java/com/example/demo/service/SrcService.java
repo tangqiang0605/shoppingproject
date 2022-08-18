@@ -17,10 +17,4 @@ public class SrcService {
         srcMapper.insert(src);
         return src.getSrcid();
     }
-
-//    public List<Src> findAll(){
-//        return srcMapper.findAll();
-//    }
-
-
 }

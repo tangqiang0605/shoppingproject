@@ -26,10 +26,6 @@ public class CustomerService {
         return ordersMapper.findByCid(cid);
     }
 
-    public List<ShowingCart> getOrderson(Integer oid) {
-        return ordersMapper.findByOid(oid);
-    }
-
     public void finishOrders(Integer oid) {
         ordersMapper.updateOstateByOid(oid, "已完成");
     }

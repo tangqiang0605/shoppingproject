@@ -1,11 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Cart;
-import com.example.demo.domain.Goods;
-import com.example.demo.domain.Shops;
-import com.example.demo.domain.ShowingGoods;
+import com.example.demo.domain.*;
 import com.example.demo.mapper.CartMapper;
 import com.example.demo.mapper.GoodsMapper;
+import com.example.demo.mapper.OrdersMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,40 +17,22 @@ public class GoodsService {
 
     @Autowired
     private GoodsMapper goodsMapper;
+//    @Autowired
+//    private CartMapper cartMapper;
     @Autowired
-    private CartMapper cartMapper;
-
+    private OrdersMapper ordersMapper;
     public List<Goods> findAll() {
         return goodsMapper.findAll();
     }
 
     /**
-     * 获取已上架的商品。
-     *
-     * @return 已上架的商品showinggoods列表。
-     */
-    public List<ShowingGoods> show() {
-        return goodsMapper.show();
-    }
-
-    /**
-     * 获取所有店铺信息用于店铺列表展示。
-     *
-     * @return
-     */
-    public List<Shops> allShops() {
-        // TODO: 2022/8/17 销量是在售商品的总销量。
-        return goodsMapper.findAllShops("已上架");
-    }
-
-    /**
      * 搜索店铺
-     *
+     * 销量是在售商品的总销量。
      * @param sname
      * @return
      */
     public List<Shops> searchShop(String sname) {
-        return goodsMapper.searchShops(sname);
+        return goodsMapper.searchShops(sname,"已上架");
     }
 
     /**
@@ -72,13 +52,9 @@ public class GoodsService {
         goodsMapper.exchange(byGid);
     }
 
-    //    public void exchange(Integer gid){
-//        Goods byGid = goodsMapper.findByGid(gid);
-//        Integer temp=byGid.getGsave();
-//        byGid.setGsave(byGid.getGonlinenum());
-//        byGid.setGonlinenum(temp);
-//        goodsMapper.exchange(byGid);
-//    }
+    public List<ShowingCart> getOrderson(Integer oid) {
+        return ordersMapper.findByOid(oid);
+    }
     public void setGoodsTime(Integer gid, Long time){
 //        String strTime = "1660807830000";
 //        Long longTime = Long.parseLong(strTime);
@@ -101,7 +77,7 @@ public class GoodsService {
     }
 
     public List<ShowingGoods> showShop(Integer sid) {
-        return goodsMapper.findBySid(sid, "已上架");
+        return goodsMapper.searchByNamePlus("", "已上架",sid);
     }
 
 

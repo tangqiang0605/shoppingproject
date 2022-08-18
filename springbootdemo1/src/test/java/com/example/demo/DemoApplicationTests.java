@@ -55,10 +55,7 @@ class DemoApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-	@Test
-	void t4GoodsMapper(){
-		System.out.println(goodsMapper.findBySid(100,"已上架"));
-	}
+
 
 	@Test
 	void t4CartMapper(){

@@ -10,21 +10,31 @@ import java.util.List;
 @RequestMapping("manager")
 @RestController
 public class ManagerController {
-//    todo：注释
-//    finish：配送员
-//    finish：管理员
-    // TODO: 2022/8/16 空页提示
+
     @Autowired
     private ManagerService managerService;
 
+    /**
+     * 管理员登录验证
+     * @param password
+     * @return
+     */
     @GetMapping("login")
     public Boolean tryLogin(String password){
         return managerService.tryLogin(password);
     }
 
+    /**
+     * 获取所有商家
+     * @return
+     */
     @GetMapping("findallstorekeeper")
     public List<StoreKeeper> findAllStoreKeeper(){return managerService.findAllStoreKeeper();}
 
+    /**
+     * 设置商家封禁状态
+     * @param storeKeeper
+     */
     @PostMapping("updatestorekeeperisban")
     public void updateStoreKeeperIsban(@RequestBody StoreKeeper storeKeeper){
         managerService.updateStoreKeeper(storeKeeper);

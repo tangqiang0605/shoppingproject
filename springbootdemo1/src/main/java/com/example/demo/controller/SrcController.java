@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("src")
@@ -25,65 +23,46 @@ public class SrcController {
     @Value("${server.port}")
     private String port;
 
-//    public
+    private static final String ip = "http://localhost:";
 
     @Autowired
     private SrcService srcService;
 
-    private static final String ip="http://localhost:";
-
-//    @PostMapping("testpost")
-//    public void postTest(@RequestBody Map<String,Object> postContext){
-////        return (Integer)postContext.get("sid") + (Integer)postContext.get("gid");
-//        System.out.println(postContext.get("sid"));
-////        return sid+gid;
-//    }
-
-//    @GetMapping("findAll")
-//    public List<Src> findAll(){
-//        return srcService.findAll();
-//    }
-
+    /**
+     * 上传文件
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @PostMapping("upload")
     public int upload(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
-        String flag= IdUtil.fastSimpleUUID();
-        String rootFilePath=System.getProperty("user.dir")+"\\springbootdemo1\\src\\main\\resources\\files\\"+ flag+"_"+originalFilename;
-        FileUtil.writeBytes(file.getBytes(),rootFilePath);
-//        return ip+port+"/src/"+flag;
-
-        Src src=new Src(null,ip+port+"/src/"+flag,rootFilePath);
+        String flag = IdUtil.fastSimpleUUID();
+        String rootFilePath = System.getProperty("user.dir") + "\\springbootdemo1\\src\\main\\resources\\files\\" + flag + "_" + originalFilename;
+        FileUtil.writeBytes(file.getBytes(), rootFilePath);
+        Src src = new Src(null, ip + port + "/src/" + flag, rootFilePath);
         return srcService.add(src);
-
     }
 
     @GetMapping("{flag}")
-    public String getFiles(HttpServletResponse response, @PathVariable String flag){
-        OutputStream os;
-        String basePath=System.getProperty("user.dir")+"\\springbootdemo1\\src\\main\\resources\\files\\";
-        List<String> fileNames=FileUtil.listFileNames(basePath);
+    public String getFiles(HttpServletResponse response, @PathVariable String flag) {
+        String basePath = System.getProperty("user.dir") + "\\springbootdemo1\\src\\main\\resources\\files\\";
+        List<String> fileNames = FileUtil.listFileNames(basePath);
         String file = fileNames.stream().filter(name -> name.contains(flag)).findAny().orElse("");
-
-        try{
-            if(StrUtil.isNotEmpty(file)){
-
-                response.addHeader("Content-Disposition","attachment;filename="+ URLEncoder.encode(file,"UTF-8"));
+        OutputStream os;
+        try {
+            if (StrUtil.isNotEmpty(file)) {
+                response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(file, "UTF-8"));
                 response.setContentType("application/octet-stream");
-                byte[] bytes=FileUtil.readBytes(basePath+file);
-                os=response.getOutputStream();
+                byte[] bytes = FileUtil.readBytes(basePath + file);
+                os = response.getOutputStream();
                 os.write(bytes);
                 os.flush();
                 os.close();
-
-
             }
-
             return file;
-
-        }catch (Exception e){
+        } catch (Exception e) {
             return "文件下载失败";
         }
-
-
     }
 }

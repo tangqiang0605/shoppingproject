@@ -77,13 +77,13 @@ public class StoreKeeperService {
         return goods.getGid();
     }
 
-    public List<ShowingGoods> findGoodsBySid(Integer sid){
-        return goodsMapper.findBySid(sid,"已上架");
-    }
-
-    public List<ShowingGoods> findRepository(Integer sid){
-        return goodsMapper.findBySid(sid,"仓库中");
-    }
+//    public List<ShowingGoods> findGoodsBySid(Integer sid){
+//        return goodsMapper.findBySid(sid,"已上架");
+//    }
+//
+//    public List<ShowingGoods> findRepository(Integer sid){
+//        return goodsMapper.findBySid(sid,"仓库中");
+//    }
 
     public List<ShowingGoods> searchGoodsByGnamePlus(String gname,String state,Integer sid) {
         return goodsMapper.searchByNamePlus(gname, state,sid);
