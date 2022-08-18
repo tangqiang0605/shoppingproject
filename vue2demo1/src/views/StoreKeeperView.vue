@@ -304,10 +304,8 @@
         <el-card shadow="hover">
           <el-descriptions title="订单信息">
             <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
-            <!--        <el-descriptions-item label="配送员">{{item.orders.did}}</el-descriptions-item>-->
             <el-descriptions-item label="顾客id">{{ item.orders.cid }}</el-descriptions-item>
             <el-descriptions-item label="状态">
-              <!--              <el-tag size="small">{{ item.orders.ostate }}</el-tag>-->
               <el-tag size="small" type="info" v-show="item.orders.ostate=='待发货'">待发货</el-tag>
               <el-tag size="small" type="warning" v-show="item.orders.ostate=='已发货'">已发货</el-tag>
               <el-tag size="small" type="danger" v-show="item.orders.ostate=='待取货'">待取货</el-tag>

@@ -6,7 +6,7 @@
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
           <el-menu-item index="1" @click="toPage('1')">商品</el-menu-item>
-          <el-menu-item index="2" @click="toPage('1')">店铺</el-menu-item>
+          <el-menu-item index="2" @click="toPage('2')">店铺</el-menu-item>
         </el-menu>
       </el-col>
       <!--      导航栏中-->
@@ -316,11 +316,19 @@ export default {
       this.activeIndex = page;
       // 重置搜索框
       this.search = '';
-      this.searchHint = this.searchText[0];
+      this.searchHint = this.searchText[Number(page)-1];
       // 从服务器获取商品信息
-      axios.get('http://localhost:8181/goods/searchgoods?gname=').then(resp => {
-        this.goodsData = resp.data;
-      })
+      if (this.activeIndex === '1') {
+        // 从服务器获取商品信息
+        axios.get('http://localhost:8181/goods/searchgoods?gname=').then(resp => {
+          this.goodsData = resp.data;
+        })
+      } else if (this.activeIndex === '2') {
+        // 从服务器获取店铺信息
+        axios.get('http://localhost:8181/goods/searchshops?sname=').then(resp => {
+          this.shopsData = resp.data;
+        });
+      }
     },
     //登录与注册检查
     customerLogin() {

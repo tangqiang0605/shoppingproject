@@ -121,8 +121,6 @@ export default {
         cname: '',
         cpassword: ''
       },
-      // shopsData: [],
-      // cartsData: [],
       shopCartsData: [],
       ordersCartsData: [],
 
@@ -168,9 +166,8 @@ export default {
       // finish：尝试购买，确认数量是否充足。更新远程数据时，接口那里除了删除购物车记录，还要视图下架商品。
       // finish：前端要更新本地是否有下架的
       axios.post('http://localhost:8181/customer/detectamount', this.shopCartsData[this.shopIndex].carts).then(resp => {
-        console.log(resp.data);
+        // console.log(resp.data);
         if (resp.data.length != 0) {
-
           for (const index in resp.data) {
             this.$message.error('支付失败！' + resp.data[index]);
           }
