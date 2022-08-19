@@ -297,12 +297,12 @@
             <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
             <el-descriptions-item label="顾客id">{{ item.orders.cid }}</el-descriptions-item>
             <el-descriptions-item label="状态">
-              <el-tag size="small" type="info" v-show="item.orders.ostate=='待发货'">待发货</el-tag>
-              <el-tag size="small" type="warning" v-show="item.orders.ostate=='已发货'">已发货</el-tag>
-              <el-tag size="small" type="danger" v-show="item.orders.ostate=='待取货'">待取货</el-tag>
-              <el-tag size="small" type="" v-show="item.orders.ostate=='配送中'">配送中</el-tag>
-              <el-tag size="small" type="danger" v-show="item.orders.ostate=='已送达'">已送达</el-tag>
-              <el-tag size="small" type="success" v-show="item.orders.ostate=='已完成'">已完成</el-tag>
+              <el-tag size="small" type="info" v-show="item.orders.ostate==='待发货'">待发货</el-tag>
+              <el-tag size="small" type="warning" v-show="item.orders.ostate==='已发货'">已发货</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate==='待取货'">待取货</el-tag>
+              <el-tag size="small" type="" v-show="item.orders.ostate==='配送中'">配送中</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate==='已送达'">已送达</el-tag>
+              <el-tag size="small" type="success" v-show="item.orders.ostate==='已完成'">已完成</el-tag>
             </el-descriptions-item>
           </el-descriptions>
           <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">
@@ -399,13 +399,11 @@ export default {
     },
     // 用户管理
     changeName() {
-      // this.testInf = "changName";
       if (this.newName === '') {
-
       } else if (this.newName === this.storeKeeper.sname) {
         this.$message.error("用户昵称重复");
       } else {
-        var newCustomer = this.storeKeeper;
+        let newCustomer = this.storeKeeper;
         newCustomer.sname = this.newName;
         axios.post('http://localhost:8181/storekeeper/change', newCustomer)
             .then(resp => {
@@ -423,7 +421,6 @@ export default {
 
     },
     changePassword() {
-      // this.testInf = "changePassword";
       if (this.newPassword0 === '' || this.newPassword1 === '' || this.newPassword2 === '') {
 
       } else if (this.newPassword0 != this.customer.cpassword) {

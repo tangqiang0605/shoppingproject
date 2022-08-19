@@ -3,8 +3,8 @@
     <el-row>
       <el-col :span="8">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
-          <el-menu-item index="1" @click="toNewOrders">未接单</el-menu-item>
-          <el-menu-item index="2" @click="toMyOrders">配送中</el-menu-item>
+          <el-menu-item index="1" @click="toOrders('1')">未接单</el-menu-item>
+          <el-menu-item index="2" @click="toOrders('2')">配送中</el-menu-item>
         </el-menu>
       </el-col>
       <el-col :span="12">
@@ -33,7 +33,6 @@
         </el-card>
       </el-row>
     </el-row>
-
     <el-row v-show="activeIndex==='2'">
       <el-row v-for="(item,orderIndex) in ordersCartsData2" style="margin: 40px">
         <el-card shadow="hover">
@@ -66,7 +65,6 @@ export default {
   name: "DeliveryView",
   data() {
     return {
-      testInf: '',
       activeIndex: '1',
 
       delivery: {
@@ -74,66 +72,43 @@ export default {
         dname: '',
         dpassword: ''
       },
-
       ordersCartsData1: [],
       ordersCartsData2: [],
     }
   },
   methods: {
-    toNewOrders() {
-      this.activeIndex = '1';
-      axios.get("http://localhost:8181/delivery/neworders").then(resp => {
-        this.ordersCartsData1.length = 0;
-        this.testInf = resp.data;
-        for (const index in resp.data) {
-          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-            this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
-          })
-        }
-      })
-    },
-    toMyOrders() {
-      this.activeIndex = '2';
-      axios.get("http://localhost:8181/delivery/myorders?did=" + this.delivery.did).then(resp => {
-        this.ordersCartsData2.length = 0;
-        // this.testInf=resp.data;
-        for (const index in resp.data) {
-          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-            this.ordersCartsData2.push({orders: resp.data[index], carts: resp1.data});
-          })
-        }
-      })
+    toOrders(page) {
+      this.activeIndex=page;
+      if (this.activeIndex === '1') {
+        axios.get("http://localhost:8181/delivery/neworders").then(resp => {
+          this.ordersCartsData1.length = 0;
+          for (const index in resp.data) {
+            axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+              this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
+            })
+          }
+        })
+      } else if (this.activeIndex === '2') {
+        axios.get("http://localhost:8181/delivery/myorders?did=" + this.delivery.did).then(resp => {
+          this.ordersCartsData1.length = 0;
+          for (const index in resp.data) {
+            axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+              this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
+            })
+          }
+        })
+      }
     },
     takeOrders(orderIndex) {
-
       axios.get('http://localhost:8181/delivery/takeorders?oid=' + this.ordersCartsData1[orderIndex].orders.oid + "&did=" + this.delivery.did).then(r => {
         this.ordersCartsData1.splice(orderIndex,1);
-        // axios.get("http://localhost:8181/delivery/neworders").then(resp => {
-        //   this.ordersCartsData1.length = 0;
-        //   // this.testInf = resp.data;
-        //   for (const index in resp.data) {
-        //     axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-        //       this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
-        //     })
-        //   }
-        // })
       })
-
     },
     finishOrders(orderIndex){
       axios.get('http://localhost:8181/delivery/finishorders?oid=' + this.ordersCartsData2[orderIndex].orders.oid).then(resp => {
         this.ordersCartsData2[orderIndex].orders.ostate='已送达';
       })
-
-
     }
-
-    // testPost() {
-    //   axios.post('https://localhost:8181/src/testpost', {"sid": '3', "gid": '8'}).then(resp => {
-    //     console.log(resp.data)
-    //   });
-    // }
-
   },
   created() {
     this.delivery = this.$store.state.delivery;
@@ -141,7 +116,6 @@ export default {
     if (this.activeIndex === '1') {
       axios.get("http://localhost:8181/delivery/neworders").then(resp => {
         this.ordersCartsData1.length = 0;
-        this.testInf = resp.data;
         for (const index in resp.data) {
           axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
             this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});

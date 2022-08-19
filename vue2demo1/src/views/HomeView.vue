@@ -682,17 +682,7 @@ export default {
       this.isLogin = true;
       this.customer = this.$store.state.customer;
     }
-    if (this.activeIndex === '1') {
-      // 从服务器获取商品信息
-      axios.get('http://localhost:8181/goods/searchgoods?gname=').then(resp => {
-        this.goodsData = resp.data;
-      })
-    } else if (this.activeIndex === '2') {
-      // 从服务器获取店铺信息
-      axios.get('http://localhost:8181/goods/searchshops?sname=').then(resp => {
-        this.shopsData = resp.data;
-      });
-    }
+    this.toPage(this.activeIndex);
   },
 
 }
