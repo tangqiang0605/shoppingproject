@@ -310,11 +310,11 @@
           </div>
           <!--          未送达之前是没有完成按钮的，而完成后会显示不可操作的完成按钮-->
           <el-button type="success" size="small" style="margin-top: 10px"
-                     v-show="item.orders.ostate==='待发货'&&(!item.orders.isdeli)"
+                     v-show="item.orders.ostate==='待发货'&&(item.orders.isdeli)"
                      @click="finishOrders(orderIndex,'已发货')">发布为配送任务
           </el-button>
           <el-button type="success" size="small" style="margin-top: 10px"
-                     v-show="item.orders.ostate==='待发货'&&item.orders.isdeli"
+                     v-show="item.orders.ostate==='待发货'&&(!item.orders.isdeli)"
                      @click="finishOrders(orderIndex,'待取货')">等待顾客取货
           </el-button>
         </el-card>
@@ -417,8 +417,6 @@ export default {
         this.newName = '';
         this.customerChangeNameVisible = false;
       }
-
-
     },
     changePassword() {
       if (this.newPassword0 === '' || this.newPassword1 === '' || this.newPassword2 === '') {
@@ -478,7 +476,7 @@ export default {
       } else if (this.chosedGoods.srcid == 0) {
         this.$message.error("请上传商品实物图");
       } else {
-        var n = Number(this.chosedGoods.gsave);
+        let n = Number(this.chosedGoods.gsave);
         if (!isNaN(n)) {
           if (n < 0) {
             this.$message.error("数量不能为负数");
@@ -489,10 +487,7 @@ export default {
             axios.post('http://localhost:8181/storekeeper/updategoods', this.chosedGoods).then(resp => {
               axios.get('http://localhost:8181/storekeeper/setgoodstime?gid=' + this.chosedGoods.gid + '&time=' + this.uploadTime).then(
                   resp1 => {
-                    let state = '仓库中';
-                    axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp2 => {
-                      this.goodsData = resp2.data;
-                    })
+                    this.toPage('2');
                   }
               )
             })

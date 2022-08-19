@@ -30,7 +30,7 @@ public interface GoodsMapper {
      * 可以和前端直接匹配的数据
      * @param goods
      */
-    @Update("update goods set gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},gonlinenum=#{gonlinenum},time=#{time} where gid=#{gid}")
+    @Update("update goods set gname=#{gname},gsave=#{gsave},gsales=#{gsales},state=#{state},srcid=#{srcid},gonlinenum=#{gonlinenum},time=#{time} where gid=#{gid}")
     void update(Goods goods);
 
     /**

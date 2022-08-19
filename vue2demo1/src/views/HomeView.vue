@@ -671,12 +671,6 @@ export default {
   },
 
   created() {
-    // 设置搜索框
-    if (this.activeIndex === '1') {
-      this.searchHint = this.searchText[0];
-    } else if (this.activeIndex === '2') {
-      this.searchHint = this.searchText[1];
-    }
     // 从缓存中获取用户信息
     if (this.$store.state.customer.cid) {
       this.isLogin = true;
