@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class ManagerService {
-    @Value("${mypassword}")
+    @Value("${manager.password}")
     private String mypassword;
 
     @Autowired

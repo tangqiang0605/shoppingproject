@@ -8,6 +8,7 @@ import com.example.demo.mapper.GoodsMapper;
 import com.example.demo.service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.w3c.dom.CDATASection;
 
@@ -26,6 +27,22 @@ class DemoApplicationTests {
 	private CustomerService customerService;
 	@Autowired
 	private GoodsMapper goodsMapper;
+
+	@Value("${manager.switch}")
+	private Boolean managerPattern;
+
+	@Value("${manager.password}")
+	private String mypassword;
+
+	@Value("${server.port}")
+	private String port;
+
+	@Test
+	public void t4Interceptor(){
+		System.out.println(managerPattern);
+		System.out.println(mypassword);
+		System.out.println(port);
+	}
 
 
 	@Test
