@@ -53,12 +53,12 @@
             <el-descriptions-item label="订单号">{{ item.orders.oid }}</el-descriptions-item>
             <el-descriptions-item label="店铺id">{{ item.orders.sid }}</el-descriptions-item>
             <el-descriptions-item label="状态">
-              <el-tag size="small" type="info" v-show="item.orders.ostate=='待发货'">待发货</el-tag>
-              <el-tag size="small" type="warning" v-show="item.orders.ostate=='已发货'">已发货</el-tag>
-              <el-tag size="small" type="danger" v-show="item.orders.ostate=='待取货'">待取货</el-tag>
-              <el-tag size="small" type="" v-show="item.orders.ostate=='配送中'">配送中</el-tag>
-              <el-tag size="small" type="danger" v-show="item.orders.ostate=='已送达'">已送达</el-tag>
-              <el-tag size="small" type="success" v-show="item.orders.ostate=='已完成'">已完成</el-tag>
+              <el-tag size="small" type="info" v-show="item.orders.ostate==='待发货'">待发货</el-tag>
+              <el-tag size="small" type="warning" v-show="item.orders.ostate==='已发货'">已发货</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate==='待取货'">待取货</el-tag>
+              <el-tag size="small" type="" v-show="item.orders.ostate==='配送中'">配送中</el-tag>
+              <el-tag size="small" type="danger" v-show="item.orders.ostate==='已送达'">已送达</el-tag>
+              <el-tag size="small" type="success" v-show="item.orders.ostate==='已完成'">已完成</el-tag>
             </el-descriptions-item>
           </el-descriptions>
           <div style="font-size: 15px;color: #999999;margin-bottom: 10px" v-for="(cart,index) in item.carts">
@@ -66,11 +66,11 @@
           </div>
           <!--          未送达之前是没有完成按钮的，而完成后会显示不可操作的完成按钮-->
           <el-button type="success" size="small" style="margin-top: 10px"
-                     v-show="item.orders.ostate=='已送达'||item.orders.ostate=='待取货'"
+                     v-show="item.orders.ostate==='已送达'||item.orders.ostate==='待取货'"
                      @click="finishOrders(orderIndex)">完成订单
           </el-button>
           <el-button type="success" size="small" style="margin-top: 10px" disabled
-                     v-show="item.orders.ostate=='已完成'">
+                     v-show="item.orders.ostate==='已完成'">
             完成订单
           </el-button>
         </el-card>
@@ -139,11 +139,10 @@ export default {
           //   更新远程数据
           axios.get('http://localhost:8181/customer/removeacart?cid=' + this.customer.cid + '&gid=' + this.shopCartsData[shopIndex].carts[cartIndex].gid);
           //   更新本地数据
-          if (this.shopCartsData[shopIndex].carts.length == 1) {
+          if (this.shopCartsData[shopIndex].carts.length == 1)
             this.shopCartsData.splice(shopIndex, 1);
-          } else {
+          else
             this.shopCartsData[shopIndex].carts.splice(cartIndex, 1);
-          }
         }).catch();
       } else {
         axios.post('http://localhost:8181/customer/updatecart', this.shopCartsData[shopIndex].carts[cartIndex]);
@@ -169,7 +168,6 @@ export default {
       // finish：尝试购买，确认数量是否充足。更新远程数据时，接口那里除了删除购物车记录，还要视图下架商品。
       // finish：前端要更新本地是否有下架的
       axios.post('http://localhost:8181/customer/detectamount', this.shopCartsData[this.shopIndex].carts).then(resp => {
-        // console.log(resp.data);
         if (resp.data.length != 0) {
           for (const index in resp.data) {
             this.$message.error('支付失败！' + resp.data[index]);
@@ -184,27 +182,21 @@ export default {
       })
     },
     finishOrders(ordersIndex) {
-      // finish：订单完成
-      var state = this.ordersCartsData[ordersIndex].orders.ostate;
-      if (state === '已送达' || state === '待取货') {
-        this.$confirm('请确认订单已签收, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          //   更新远程数据
-          axios.get('http://localhost:8181/customer/finishorders?oid=' + this.ordersCartsData[ordersIndex].orders.oid);
-          //   更新本地数据
-          this.ordersCartsData[ordersIndex].orders.ostate = "已完成";
-        }).catch();
-      } else {
-        // 整个if判断其实可以去掉
-      }
+      this.$confirm('请确认订单已签收, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //   更新远程数据
+        axios.get('http://localhost:8181/customer/finishorders?oid=' + this.ordersCartsData[ordersIndex].orders.oid);
+        //   更新本地数据
+        this.ordersCartsData[ordersIndex].orders.ostate = "已完成";
+      }).catch();
     },
 
     // 导航栏切换
     toPage(page) {
-      this.activeIndex=page;
+      this.activeIndex = page;
       if (this.activeIndex === '1') {
         // 从服务器获取商品信息
         axios.get("http://localhost:8181/customer/findshops?cid=" + this.customer.cid).then(resp => {

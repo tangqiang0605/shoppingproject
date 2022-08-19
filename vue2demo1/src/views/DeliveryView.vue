@@ -100,14 +100,10 @@ export default {
       }
     },
     takeOrders(orderIndex) {
-      axios.get('http://localhost:8181/delivery/takeorders?oid=' + this.ordersCartsData1[orderIndex].orders.oid + "&did=" + this.delivery.did).then(r => {
-        this.ordersCartsData1.splice(orderIndex,1);
-      })
+      axios.get('http://localhost:8181/delivery/takeorders?oid=' + this.ordersCartsData1[orderIndex].orders.oid + "&did=" + this.delivery.did).then(r => this.ordersCartsData1.splice(orderIndex,1))
     },
     finishOrders(orderIndex){
-      axios.get('http://localhost:8181/delivery/finishorders?oid=' + this.ordersCartsData2[orderIndex].orders.oid).then(resp => {
-        this.ordersCartsData2[orderIndex].orders.ostate='已送达';
-      })
+      axios.get('http://localhost:8181/delivery/finishorders?oid=' + this.ordersCartsData2[orderIndex].orders.oid).then(resp => this.ordersCartsData2[orderIndex].orders.ostate='已送达')
     }
   },
   created() {

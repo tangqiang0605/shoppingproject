@@ -317,19 +317,8 @@ export default {
       this.activeIndex = page;
       // 重置搜索框
       this.search = '';
-      this.searchHint = this.searchText[Number(page)-1];
-      // 从服务器获取商品信息
-      if (this.activeIndex === '1') {
-        // 从服务器获取商品信息
-        axios.get('http://localhost:8181/goods/searchgoods?gname=').then(resp => {
-          this.goodsData = resp.data;
-        })
-      } else if (this.activeIndex === '2') {
-        // 从服务器获取店铺信息
-        axios.get('http://localhost:8181/goods/searchshops?sname=').then(resp => {
-          this.shopsData = resp.data;
-        });
-      }
+      this.searchHint = this.searchText[Number(page) - 1];
+      this.searchData();
     },
     //登录与注册检查
     customerLogin() {
@@ -659,15 +648,11 @@ export default {
     },
     // 搜索功能:当搜索为空时搜索全部
     searchData() {
-      if (this.activeIndex === '1') {
-        axios.get('http://localhost:8181/goods/searchgoods?gname=' + this.search).then(resp => {
-          this.goodsData = resp.data;
-        })
-      } else if (this.activeIndex === '2') {
-        axios.get('http://localhost:8181/goods/searchshops?sname=' + this.search).then(resp => {
-          this.shopsData = resp.data;
-        })
-      }
+      if (this.activeIndex === '1')
+        axios.get('http://localhost:8181/goods/searchgoods?gname=' + this.search).then(resp => this.goodsData = resp.data)
+      else if (this.activeIndex === '2')
+        axios.get('http://localhost:8181/goods/searchshops?sname=' + this.search).then(resp => this.shopsData = resp.data)
+
     }
   },
 
@@ -689,19 +674,23 @@ export default {
   font-size: 13px;
   color: #999;
 }
+
 .bottom {
   margin-top: 13px;
   line-height: 12px;
 }
+
 .button {
   padding: 0;
   float: right;
 }
+
 .clearfix:before,
 .clearfix:after {
   display: table;
   content: "";
 }
+
 .clearfix:after {
   clear: both
 }

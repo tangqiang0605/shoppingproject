@@ -382,9 +382,10 @@ export default {
       axios.get("http://localhost:8181/storekeeper/getorders?sid=" + this.storeKeeper.sid).then(resp => {
         this.ordersCartsData.length = 0;
         for (const index in resp.data) {
-          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-            this.ordersCartsData.push({orders: resp.data[index], carts: resp1.data});
-          })
+          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => this.ordersCartsData.push({
+            orders: resp.data[index],
+            carts: resp1.data
+          }))
         }
       })
 
@@ -476,13 +477,9 @@ export default {
             // 从表单读取的值
             this.chosedGoods.gsave = n;
             this.changeFormVisible = false;
-            axios.post('http://localhost:8181/storekeeper/updategoods', this.chosedGoods).then(resp => {
-              axios.get('http://localhost:8181/storekeeper/setgoodstime?gid=' + this.chosedGoods.gid + '&time=' + this.uploadTime).then(
-                  resp1 => {
-                    this.toPage('2');
-                  }
-              )
-            })
+            axios.post('http://localhost:8181/storekeeper/updategoods', this.chosedGoods).then(resp =>
+                axios.get('http://localhost:8181/storekeeper/setgoodstime?gid=' + this.chosedGoods.gid + '&time=' + this.uploadTime).then(
+                    resp1 => this.toPage('2')))
           }
         } else {
           this.$message.error("数量必须为数字");
@@ -497,9 +494,7 @@ export default {
       } else if (this.activeIndex === '2') {
         state = '仓库中';
       }
-      axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + this.searchContext + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-        this.goodsData = resp.data;
-      })
+      axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + this.searchContext + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => this.goodsData = resp.data)
     },
     changeState(goods, state) {
       // 改变商品state
@@ -590,12 +585,7 @@ export default {
     // 订单处理
     finishOrders(orderIndex, state) {
       // 更新远程数据
-      axios.get('http://localhost:8181/storekeeper/updateodersstate?oid=' + this.ordersCartsData[orderIndex].orders.oid + '&ostate=' + state).then(
-          resp => {
-            // 更新本地数据
-            this.ordersCartsData[orderIndex].orders.ostate = state;
-          }
-      )
+      axios.get('http://localhost:8181/storekeeper/updateodersstate?oid=' + this.ordersCartsData[orderIndex].orders.oid + '&ostate=' + state).then(resp => this.ordersCartsData[orderIndex].orders.ostate = state)
     },
   },
   created() {

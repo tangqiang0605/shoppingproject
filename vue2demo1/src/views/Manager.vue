@@ -77,9 +77,7 @@ export default {
     changeState(storeKeeper, state) {
       storeKeeper.isban = state;
       axios.post('http://localhost:8181/manager/updatestorekeeperisban', storeKeeper).then(resp => {
-            axios.get('http://localhost:8181/manager/findallstorekeeper').then(resp1 => {
-              this.shopkeeperData = resp1.data;
-            })
+            axios.get('http://localhost:8181/manager/findallstorekeeper').then(resp1 => this.shopkeeperData = resp1.data)
           }
       )
     },
