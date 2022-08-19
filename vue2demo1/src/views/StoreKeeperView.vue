@@ -374,15 +374,7 @@ export default {
     // 切换页面
     toPage(page) {
       this.activeIndex = page;
-      let state = '';
-      if (this.activeIndex === '1') {
-        state = '已上架';
-      } else if (this.activeIndex === '2') {
-        state = '仓库中';
-      }
-      axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-        this.goodsData = resp.data;
-      })
+      this.search();
     },
     toOrders() {
       this.activeIndex = '3';
@@ -512,17 +504,7 @@ export default {
     changeState(goods, state) {
       // 改变商品state
       goods.goods.state = state;
-      axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
-        let state = '';
-        if (this.activeIndex === '1') {
-          state = '已上架';
-        } else if (this.activeIndex === '2') {
-          state = '仓库中';
-        }
-        axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-          this.goodsData = resp.data;
-        })
-      })
+      axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => this.search())
     },
     delGoods(showingGoods) {
       this.$confirm('将从仓库永久移除该商品, 是否继续?', '提示', {
@@ -532,13 +514,7 @@ export default {
       }).then(() => {
         showingGoods.goods.state = '已删除';
         //   更新远程数据
-        axios.post('http://localhost:8181/storekeeper/updategoodsstate', showingGoods).then(resp => {
-          let state = '仓库中';
-          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-            this.goodsData = resp.data;
-          })
-        })
-
+        axios.post('http://localhost:8181/storekeeper/updategoodsstate', showingGoods).then(resp => this.toPage('2'))
       }).catch();
     },
     handleSelectionChange(val) {
@@ -548,17 +524,7 @@ export default {
       for (const index in this.multipleSelection) {
         let goods = this.multipleSelection[index];
         goods.goods.state = state;
-        axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => {
-          let state = '';
-          if (this.activeIndex === '1') {
-            state = '已上架';
-          } else if (this.activeIndex === '2') {
-            state = '仓库中';
-          }
-          axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-            this.goodsData = resp.data;
-          })
-        })
+        axios.post('http://localhost:8181/storekeeper/updategoodsstate', goods).then(resp => this.search())
       }
     },
     // 文件处理
@@ -605,10 +571,7 @@ export default {
                     this.goods = {};
                     // 跳转到仓库
                     this.activeIndex = '2';
-                    let state = '仓库中';
-                    axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-                      this.goodsData = resp.data;
-                    })
+                    this.search();
                     this.$message({
                       message: '添加成功，返回商品id' + resp.data,
                       type: 'success'
@@ -638,15 +601,7 @@ export default {
   created() {
     this.storeKeeper = this.$store.state.storeKeeper;
     this.isLogin = true;
-    let state = '';
-    if (this.activeIndex === '1') {
-      state = '已上架';
-    } else if (this.activeIndex === '2') {
-      state = '仓库中';
-    }
-    axios.get('http://localhost:8181/storekeeper/searchgoods?gname=' + '&state=' + state + '&sid=' + this.storeKeeper.sid).then(resp => {
-      this.goodsData = resp.data;
-    })
+    this.search();
   }
 
 }

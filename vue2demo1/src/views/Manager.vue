@@ -61,9 +61,6 @@ export default {
     }
 
   },
-  created() {
-    // this.password='1234';
-  },
   methods: {
     tryLogin() {
       axios.get('http://localhost:8181/manager/login?password=' + this.password).then(
