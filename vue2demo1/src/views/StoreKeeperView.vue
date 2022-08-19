@@ -547,7 +547,7 @@ export default {
       } else if (this.goods.srcid == 0) {
         this.$message.error("请上传商品实物图");
       } else {
-        var n = Number(this.goods.gsave);
+        let n = Number(this.goods.gsave);
         if (!isNaN(n)) {
           if (n < 0) {
             this.$message.error("数量不能为负数");

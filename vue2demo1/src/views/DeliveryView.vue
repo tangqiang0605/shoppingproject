@@ -82,18 +82,20 @@ export default {
       if (this.activeIndex === '1') {
         axios.get("http://localhost:8181/delivery/neworders").then(resp => {
           this.ordersCartsData1.length = 0;
-          for (const index in resp.data) {
-            axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-              this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
-            })
+          if(resp.data.length!==0){
+            for (const index in resp.data) {
+              axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
+                this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
+              })
+            }
           }
         })
       } else if (this.activeIndex === '2') {
         axios.get("http://localhost:8181/delivery/myorders?did=" + this.delivery.did).then(resp => {
-          this.ordersCartsData1.length = 0;
+          this.ordersCartsData2.length = 0;
           for (const index in resp.data) {
             axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-              this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
+              this.ordersCartsData2.push({orders: resp.data[index], carts: resp1.data});
             })
           }
         })
@@ -108,26 +110,7 @@ export default {
   },
   created() {
     this.delivery = this.$store.state.delivery;
-
-    if (this.activeIndex === '1') {
-      axios.get("http://localhost:8181/delivery/neworders").then(resp => {
-        this.ordersCartsData1.length = 0;
-        for (const index in resp.data) {
-          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-            this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
-          })
-        }
-      })
-    } else if (this.activeIndex === '2') {
-      axios.get("http://localhost:8181/delivery/myorders?did=" + this.delivery.did).then(resp => {
-        this.ordersCartsData1.length = 0;
-        for (const index in resp.data) {
-          axios.get('http://localhost:8181/customer/getorderson?oid=' + resp.data[index].oid).then(resp1 => {
-            this.ordersCartsData1.push({orders: resp.data[index], carts: resp1.data});
-          })
-        }
-      })
-    }
+    this.toOrders(this.activeIndex);
   }
 }
 </script>
