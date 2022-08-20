@@ -14,7 +14,12 @@
       </el-col>
       <el-col :span="4">
         <el-menu class="el-menu-demo" mode="horizontal">
-          <el-menu-item>您好！{{ delivery.dname}}</el-menu-item>
+          <el-submenu index="5">
+            <template slot="title">您好！{{ delivery.dname }}</template>
+            <el-menu-item index="5-1" @click="deliveryChangeNameVisible=true">修改昵称</el-menu-item>
+            <el-menu-item index="5-2" @click="deliveryChangePassWordVisible=true">修改密码</el-menu-item>
+            <el-menu-item index="5-5" @click="outLogin">退出登录</el-menu-item>
+          </el-submenu>
         </el-menu>
       </el-col>
     </el-row>
@@ -55,6 +60,41 @@
         </el-card>
       </el-row>
     </el-row>
+
+    <!--    修改昵称-->
+    <div>
+      <el-dialog title="修改昵称" :visible.sync="deliveryChangeNameVisible">
+        <el-form :model="delivery">
+          <el-form-item label="用户昵称" label-width="120px">
+            <el-input v-model="newName" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="deliveryChangeNameVisible = false;newName=''">取 消</el-button>
+          <el-button type="primary" @click="changeName">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    <!--    修改密码-->
+    <div>
+      <el-dialog title="修改密码" :visible.sync="deliveryChangePassWordVisible">
+        <el-form :model="delivery">
+          <el-form-item label="旧的密码" label-width="120px">
+            <el-input v-model="newPassword0" autocomplete="off" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="新的密码" label-width="120px">
+            <el-input v-model="newPassword1" autocomplete="off" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="确认新的密码" label-width="120px">
+            <el-input v-model="newPassword2" autocomplete="off" show-password></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="changePasswordCancel">取 消</el-button>
+          <el-button type="primary" @click="changePassword">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -66,6 +106,13 @@ export default {
   data() {
     return {
       activeIndex: '1',
+
+      newName:'',
+      newPassword0:'',
+      newPassword1:'',
+      newPassword2:'',
+      deliveryChangeNameVisible:false,
+      deliveryChangePassWordVisible:false,
 
       delivery: {
         did: 0,
@@ -106,7 +153,61 @@ export default {
     },
     finishOrders(orderIndex){
       axios.get('http://localhost:8181/delivery/finishorders?oid=' + this.ordersCartsData2[orderIndex].orders.oid).then(resp => this.ordersCartsData2[orderIndex].orders.ostate='已送达')
-    }
+    },
+    // 用户管理
+    changeName() {
+      if (this.newName === '') {
+      } else if (this.newName === this.delivery.dname) {
+        this.$message.error("用户昵称重复");
+      } else {
+        let newDelivery = this.delivery;
+        newDelivery.dname = this.newName;
+        axios.post('http://localhost:8181/delivery/update', newDelivery)
+            .then(resp => {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+              this.delivery = newDelivery;
+              this.$store.commit('saveDelivery', newDelivery);
+            });
+        this.newName = '';
+        this.deliveryChangeNameVisible = false;
+      }
+    },
+    changePassword() {
+      if (this.newPassword0 === '' || this.newPassword1 === '' || this.newPassword2 === '') {
+
+      } else if (this.newPassword0 != this.delivery.dpassword) {
+        this.$message.error("密码错误");
+      } else if (this.newPassword1 != this.newPassword2) {
+        this.$message.error("两次输入密码不一致");
+      } else {
+        let newDelivery = this.delivery;
+        newDelivery.dpassword = this.newPassword2;
+        axios.post('http://localhost:8181/delivery/update', newDelivery)
+            .then(resp => {
+              this.$message({
+                message: '修改成功' + '请重新登录',
+                type: 'success'
+              });
+              // 清空登录信息:
+              this.$store.commit('saveDelivery', {});
+              this.$router.push('/');
+            });
+      }
+
+    },
+    changePasswordCancel() {
+      this.newPassword0 = '';
+      this.newPassword1 = '';
+      this.newPassword2 = '';
+      this.deliveryChangePassWordVisible = false;
+    },
+    outLogin() {
+      this.$store.commit('saveStoreKeeper', {});
+      this.$router.push('/');
+    },
   },
   created() {
     this.delivery = this.$store.state.delivery;

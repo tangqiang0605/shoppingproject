@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.Delivery;
 import com.example.demo.domain.Orders;
+import com.example.demo.domain.StoreKeeper;
 import com.example.demo.service.DeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +51,12 @@ public class DeliveryController {
     @PostMapping("getinf")
     public Delivery getInf(@RequestBody Delivery delivery) {
         return deliveryService.getInf(delivery);
+    }
+
+    @PostMapping("update")
+    public String update(@RequestBody Delivery delivery) {
+        deliveryService.update(delivery);
+        return "更新成功";
     }
 
     /**

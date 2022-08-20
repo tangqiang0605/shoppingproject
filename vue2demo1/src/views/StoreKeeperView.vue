@@ -420,7 +420,6 @@ export default {
       } else {
         let newStorekeeper = this.storeKeeper;
         newStorekeeper.sname = this.newName;
-        console.log(newStorekeeper);
         axios.post('http://localhost:8181/storekeeper/update', newStorekeeper)
             .then(resp => {
               this.$message({
@@ -461,7 +460,7 @@ export default {
       this.newPassword0 = '';
       this.newPassword1 = '';
       this.newPassword2 = '';
-      this.customerChangePassWordVisible = false;
+      this.storeKeeperChangePassWordVisible = false;
     },
     outLogin() {
       this.$store.commit('saveStoreKeeper', {});
