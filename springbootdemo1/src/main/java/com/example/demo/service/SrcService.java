@@ -15,4 +15,8 @@ public class SrcService {
         srcMapper.insert(src);
         return src.getSrcid();
     }
+//    todo:给接口（直接通过srcid查询文件并下载）用，发挥src表的srcname的作用
+    public Src findBySrcid(String srcid) {
+        return srcMapper.findBySrcid(srcid);
+    }
 }

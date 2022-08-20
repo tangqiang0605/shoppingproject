@@ -309,7 +309,6 @@ export default {
       shopsData: [],
     }
   },
-  // todo；简化homeview，customer，delivery代码
   methods: {
     // 导航栏切换
     toPage(page) {
