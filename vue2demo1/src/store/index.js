@@ -48,10 +48,10 @@ export default new Vuex.Store({
           window.localStorage
               .getItem('storekeeperinfo' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('storekeeperinfo' || '[]'))
               .spassword,
-      isbank:
+      isban:
           window.localStorage
               .getItem('storekeeperinfo' || '[]') == null ? '' : JSON.parse(window.localStorage.getItem('storekeeperinfo' || '[]'))
-              .isbank
+              .isban
 
     }
   },

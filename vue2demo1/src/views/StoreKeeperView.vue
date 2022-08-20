@@ -19,8 +19,8 @@
           <el-submenu index="5">
             <template slot="title">您好！{{ storeKeeper.sname }}店长</template>
             <el-menu-item index="5-3" @click="dialogFormVisible = true">新增商品</el-menu-item>
-            <el-menu-item index="5-1" @click="changeName">修改昵称</el-menu-item>
-            <el-menu-item index="5-2" @click="changePassword">修改密码</el-menu-item>
+            <el-menu-item index="5-1" @click="storeKeeperChangeNameVisible=true">修改昵称</el-menu-item>
+            <el-menu-item index="5-2" @click="storeKeeperChangePassWordVisible=true">修改密码</el-menu-item>
             <el-menu-item index="5-5" @click="outLogin">退出登录</el-menu-item>
           </el-submenu>
         </el-menu>
@@ -71,10 +71,6 @@
           </el-upload>
 
         </el-form-item>
-        <!--        <el-form-item label="" :label-width="formLabelWidth">-->
-        <!--          <el-input v-model="goods.gsave" autocomplete="off"></el-input>-->
-        <!--        </el-form-item>-->
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -128,11 +124,9 @@
         >
           <i class="el-icon-delete"></i>
         </span>
-
       </span>
             </div>
           </el-upload>
-
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -150,7 +144,6 @@
         <el-input v-model="searchContext" placeholder="请输入内容" style="margin-left:10px;width: 600px"></el-input>
       </el-row>
       <el-table
-          v-show="isLogin"
           :data="goodsData"
           border
           @selection-change="handleSelectionChange"
@@ -159,14 +152,10 @@
             type="selection"
             width="55">
         </el-table-column>
-        <!--      fixed prop label width-->
         <el-table-column
             prop="srcurl"
             label="商品图"
             width="180">
-          <!--          <template slot-scope="scope">-->
-          <!--            <el-image :src="scope.srcurl"></el-image>-->
-          <!--          </template>-->
           <template slot-scope="scope">
             <el-image
                 fit="contain"
@@ -175,13 +164,6 @@
                 :preview-src-list="[scope.row.srcurl]"></el-image>
           </template>
         </el-table-column>
-
-
-        <!--        <el-table-column-->
-        <!--            prop="sname"-->
-        <!--            label="店铺名称"-->
-        <!--            width="120">-->
-        <!--        </el-table-column>-->
         <el-table-column
             prop="goods.gname"
             label="商品名"
@@ -227,7 +209,6 @@
         <el-input v-model="searchContext" placeholder="请输入内容" style="margin-left:10px;width: 600px"></el-input>
       </el-row>
       <el-table
-          v-show="isLogin"
           :data="goodsData"
           border
           @selection-change="handleSelectionChange"
@@ -321,6 +302,41 @@
       </el-row>
     </el-row>
 
+    <!--    修改昵称-->
+    <div>
+      <el-dialog title="修改昵称" :visible.sync="storeKeeperChangeNameVisible">
+        <el-form :model="storeKeeper">
+          <el-form-item label="用户昵称" label-width="120px">
+            <el-input v-model="newName" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="storeKeeperChangeNameVisible = false;newName=''">取 消</el-button>
+          <el-button type="primary" @click="changeName">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    <!--    修改密码-->
+    <div>
+      <el-dialog title="修改密码" :visible.sync="storeKeeperChangePassWordVisible">
+        <el-form :model="storeKeeper">
+          <el-form-item label="旧的密码" label-width="120px">
+            <el-input v-model="newPassword0" autocomplete="off" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="新的密码" label-width="120px">
+            <el-input v-model="newPassword1" autocomplete="off" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="确认新的密码" label-width="120px">
+            <el-input v-model="newPassword2" autocomplete="off" show-password></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="changePasswordCancel">取 消</el-button>
+          <el-button type="primary" @click="changePassword">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+
   </div>
 </template>
 
@@ -337,7 +353,13 @@ export default {
       activeIndex: '1',
       uploadTime: 0,
       searchContext: '',
-      isLogin: false,
+
+      newName:'',
+      newPassword0:'',
+      newPassword1:'',
+      newPassword2:'',
+      storeKeeperChangeNameVisible:false,
+      storeKeeperChangePassWordVisible:false,
 
       dialogImageUrl: '',
       dialogVisible: false,
@@ -396,46 +418,42 @@ export default {
       } else if (this.newName === this.storeKeeper.sname) {
         this.$message.error("用户昵称重复");
       } else {
-        let newCustomer = this.storeKeeper;
-        newCustomer.sname = this.newName;
-        axios.post('http://localhost:8181/storekeeper/change', newCustomer)
+        let newStorekeeper = this.storeKeeper;
+        newStorekeeper.sname = this.newName;
+        console.log(newStorekeeper);
+        axios.post('http://localhost:8181/storekeeper/update', newStorekeeper)
             .then(resp => {
               this.$message({
                 message: '修改成功',
                 type: 'success'
               });
-              this.customer = newCustomer;
-              this.$store.commit('saveCustomer', newCustomer);
+              this.storeKeeper = newStorekeeper;
+              this.$store.commit('saveStoreKeeper', newStorekeeper);
             });
         this.newName = '';
-        this.customerChangeNameVisible = false;
+        this.storeKeeperChangeNameVisible = false;
       }
     },
     changePassword() {
       if (this.newPassword0 === '' || this.newPassword1 === '' || this.newPassword2 === '') {
 
-      } else if (this.newPassword0 != this.customer.cpassword) {
+      } else if (this.newPassword0 != this.storeKeeper.spassword) {
         this.$message.error("密码错误");
       } else if (this.newPassword1 != this.newPassword2) {
         this.$message.error("两次输入密码不一致");
       } else {
-        var newCustomer = this.customer;
-        newCustomer.cpassword = this.newPassword2;
-        axios.post('http://localhost:8181/customer/change', newCustomer)
+        let newStoreKeeper = this.storeKeeper;
+        newStoreKeeper.spassword = this.newPassword2;
+        axios.post('http://localhost:8181/storekeeper/update', newStoreKeeper)
             .then(resp => {
               this.$message({
                 message: '修改成功' + '请重新登录',
                 type: 'success'
               });
               // 清空登录信息:
-              this.$store.commit('saveCustomer', {});
-              this.customer = {};
-              this.isLogin = false;
+              this.$store.commit('saveStoreKeeper', {});
+              this.$router.push('/');
             });
-        this.newPassword0 = '';
-        this.newPassword1 = '';
-        this.newPassword2 = '';
-        this.customerChangePassWordVisible = false;
       }
 
     },
@@ -590,7 +608,6 @@ export default {
   },
   created() {
     this.storeKeeper = this.$store.state.storeKeeper;
-    this.isLogin = true;
     this.search();
   }
 
